@@ -1,54 +1,34 @@
 package com.minis.context;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.minis.beans.BeanDefinition;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import com.minis.beans.BeanFactory;
+import com.minis.beans.BeansException;
+import com.minis.beans.SimpleBeanFactory;
+import com.minis.beans.XmlBeanDefinitionReader;
+import com.minis.core.ClassPathXmlResource;
+import com.minis.core.Resource;
 
-public class ClassPathXmlApplicationContext {
+public class ClassPathXmlApplicationContext implements BeanFactory {
 
-    private List<BeanDefinition> beanDefinitions = new ArrayList<>();
+    BeanFactory beanFactory;
 
-    private Map<String, Object> singletons = new HashMap<>();
-
+    // 读外部配置，解析 Bean 定义，创建 BeanFactory
     public ClassPathXmlApplicationContext(String fileName) {
-        this.readXml(fileName);
-        this.instanceBeans();
+        Resource resource = new ClassPathXmlResource(fileName);
+        BeanFactory beanFactory = new SimpleBeanFactory();
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.loadBeanDefinitions(resource);
+        this.beanFactory = beanFactory;
     }
 
-
-    private void readXml(String fileName) {
-        SAXReader saxReader = new SAXReader();
-        try {
-            // 类装载器负责从Java字符文件将字符流读入内存，并构造Class类对象，所以通过它可以得到一个文件的输入流
-            URL xmlPath = this.getClass().getClassLoader().getResource(fileName);
-            Document document = saxReader.read(xmlPath);
-            Element rootElement = document.getRootElement();
-            for (Element element : rootElement.elements()) {
-                String beanName = element.attributeValue("name");
-                String beanClassName = element.attributeValue("class");
-                BeanDefinition beanDefinition = new BeanDefinition(beanName, beanClassName);
-                beanDefinitions.add(beanDefinition);
-            }
-        } catch (Exception e) {}
+    @Override
+    public Object getBean(String beanName) throws BeansException {
+        return this.beanFactory.getBean(beanName);
     }
 
-    private void instanceBeans() {
-        for (BeanDefinition beanDefinition : beanDefinitions) {
-            try {
-                singletons.put(beanDefinition.getName(), Class.forName(beanDefinition.getClassName()).newInstance());
-            } catch (Exception e) {}
-        }
-    }
-
-    public Object getBean(String beanName) {
-        return singletons.get(beanName);
+    @Override
+    public void registerBeanDefinition(BeanDefinition beanDefinition) {
+        this.beanFactory.registerBeanDefinition(beanDefinition);
     }
 
 }
