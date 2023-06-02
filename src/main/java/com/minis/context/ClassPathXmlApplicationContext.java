@@ -8,11 +8,16 @@ import com.minis.beans.XmlBeanDefinitionReader;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
 
+/**
+ * Context 负责整合容器的启动过程
+ *   1. 创建 BeanFactory
+ *   1. 读XML文件，从中解析出Bean定义
+ *   3. 实例化这些 bean，并将它们注入到 IoC 容器中
+ */
 public class ClassPathXmlApplicationContext implements BeanFactory {
 
     BeanFactory beanFactory;
 
-    // 读外部配置，解析 Bean 定义，创建 BeanFactory
     public ClassPathXmlApplicationContext(String fileName) {
         Resource resource = new ClassPathXmlResource(fileName);
         BeanFactory beanFactory = new SimpleBeanFactory();

@@ -3,6 +3,9 @@ package com.minis.beans;
 import com.minis.core.Resource;
 import org.dom4j.Element;
 
+/**
+ * 解析XML文件
+ */
 public class XmlBeanDefinitionReader {
 
     BeanFactory beanFactory;
@@ -11,6 +14,9 @@ public class XmlBeanDefinitionReader {
         this.beanFactory = beanFactory;
     }
 
+    /**
+     * 注册XML中配置的 BeanDefinition
+     */
     public void loadBeanDefinitions(Resource resource) {
         while (resource.hasNext()) {
             Element element = (Element) resource.next();

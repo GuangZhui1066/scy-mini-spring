@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 简单的 BeanFactory 实现类
+ */
 public class SimpleBeanFactory implements BeanFactory {
 
     private List<BeanDefinition> beanDefinitions = new ArrayList<>();
@@ -22,21 +25,24 @@ public class SimpleBeanFactory implements BeanFactory {
      */
     @Override
     public Object getBean(String beanName) throws BeansException {
-        // 先尝试直接拿Bean实例
+        // 先尝试直接拿 bean 实例
         Object singleton = singletons.get(beanName);
-        // 如果此时还没有这个Bean的实例，则获取它的定义来创建实例
+
+        // 此时还没有这个Bean的实例，需要创建实例
         if (singleton == null) {
             int i = beanNames.indexOf(beanName);
+            // 这个 BeanDefinition 还没有被注册，就抛出异常
             if (i == -1) {
                 throw new BeansException("bean is null.");
             }
+            // 这个 BeanDefinition 已经被注册，获取其定义，创建 bean 实例
             else {
-                //获取Bean的定义
                 BeanDefinition beanDefinition = beanDefinitions.get(i);
                 try {
+                    // 根据类名获取 class 对象，然后创建对象实例
                     singleton = Class.forName(beanDefinition.getClassName()).newInstance();
                 } catch (Exception ignored) {}
-                //注册Bean实例
+                // 把这个bean实例保存到容器中
                 singletons.put(beanDefinition.getName(), singleton);
             }
         }

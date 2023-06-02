@@ -7,6 +7,9 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+/**
+ * XML文件资源
+ */
 public class ClassPathXmlResource implements Resource {
 
     Document document;
