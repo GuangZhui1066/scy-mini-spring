@@ -10,6 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
 
+    /**
+     * 用 ConcurrentHashMap，确保多线程并发情况下的安全性
+     */
     private Map<String, BeanDefinition> beanDefinitions = new ConcurrentHashMap<>(256);
 
     public SimpleBeanFactory() {
