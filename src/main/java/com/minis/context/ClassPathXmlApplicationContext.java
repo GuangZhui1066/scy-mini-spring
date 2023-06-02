@@ -32,8 +32,13 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     }
 
     @Override
-    public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        this.beanFactory.registerBeanDefinition(beanDefinition);
+    public void registerBean(String beanName, Object beanObj) {
+        this.beanFactory.registerBean(beanName, beanObj);
+    }
+
+    @Override
+    public Boolean containsBean(String beanName) {
+        return this.beanFactory.containsBean(beanName);
     }
 
 }

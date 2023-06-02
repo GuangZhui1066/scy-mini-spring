@@ -1,20 +1,16 @@
 package com.minis.beans;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 简单的 BeanFactory 实现类
+ *
+ * 继承 DefaultSingletonBeanRegistry，默认创建出的所有 bean 都是单例的.
  */
-public class SimpleBeanFactory implements BeanFactory {
+public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
 
-    private List<BeanDefinition> beanDefinitions = new ArrayList<>();
-
-    private List<String> beanNames = new ArrayList<>();
-
-    private Map<String, Object> singletons = new HashMap<>();
+    private Map<String, BeanDefinition> beanDefinitions = new ConcurrentHashMap<>(256);
 
     public SimpleBeanFactory() {
     }
@@ -26,33 +22,36 @@ public class SimpleBeanFactory implements BeanFactory {
     @Override
     public Object getBean(String beanName) throws BeansException {
         // 先尝试直接拿 bean 实例
-        Object singleton = singletons.get(beanName);
+        Object singleton = this.getSingleton(beanName);
 
-        // 此时还没有这个Bean的实例，需要创建实例
+        // 此时还没有这个 bean 的实例，需要创建实例
         if (singleton == null) {
-            int i = beanNames.indexOf(beanName);
-            // 这个 BeanDefinition 还没有被注册，就抛出异常
-            if (i == -1) {
-                throw new BeansException("bean is null.");
+            // 获取 bean 的定义
+            BeanDefinition beanDefinition = this.beanDefinitions.get(beanName);
+            if (beanDefinition == null) {
+                throw new BeansException("No bean.");
             }
-            // 这个 BeanDefinition 已经被注册，获取其定义，创建 bean 实例
-            else {
-                BeanDefinition beanDefinition = beanDefinitions.get(i);
-                try {
-                    // 根据类名获取 class 对象，然后创建对象实例
-                    singleton = Class.forName(beanDefinition.getClassName()).newInstance();
-                } catch (Exception ignored) {}
-                // 把这个bean实例保存到容器中
-                singletons.put(beanDefinition.getName(), singleton);
-            }
+
+            // 根据bean的定义创建bean的实例
+            try {
+                // 根据类名获取 class 对象，然后创建对象实例
+                singleton = Class.forName(beanDefinition.getClassName()).newInstance();
+            } catch (Exception ignored) {}
+
+            // 把这个bean实例保存到容器中
+            singletons.put(beanDefinition.getName(), singleton);
         }
         return singleton;
     }
 
     @Override
-    public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        this.beanDefinitions.add(beanDefinition);
-        this.beanNames.add(beanDefinition.getName());
+    public void registerBean(String beanName, Object beanObj) {
+        this.registerSingleton(beanName, beanObj);
+    }
+
+    @Override
+    public Boolean containsBean(String beanName) {
+        return containsSingleton(beanName);
     }
 
 }

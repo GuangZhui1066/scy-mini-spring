@@ -1,7 +1,7 @@
 package com.minis.beans;
 
 /**
- * IoC 容器
+ * IoC 容器 (bean的工厂类)
  *
  * 作用：
  *   将创建对象与使用对象的业务代码解耦，让业务开发人员无需关注底层对象(bean)的创建和生命周期
@@ -14,6 +14,8 @@ public interface BeanFactory {
 
     Object getBean(String beanName) throws BeansException;
 
-    void registerBeanDefinition(BeanDefinition beanDefinition);
+    void registerBean(String beanName, Object beanObj);
+
+    Boolean containsBean(String beanName);
 
 }
