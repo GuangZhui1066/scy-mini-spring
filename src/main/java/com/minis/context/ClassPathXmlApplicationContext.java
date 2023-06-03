@@ -1,6 +1,5 @@
 package com.minis.context;
 
-import com.minis.beans.BeanDefinition;
 import com.minis.beans.BeanFactory;
 import com.minis.beans.BeansException;
 import com.minis.beans.SimpleBeanFactory;
@@ -16,14 +15,14 @@ import com.minis.core.Resource;
  */
 public class ClassPathXmlApplicationContext implements BeanFactory {
 
-    BeanFactory beanFactory;
+    SimpleBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
         Resource resource = new ClassPathXmlResource(fileName);
-        BeanFactory beanFactory = new SimpleBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        SimpleBeanFactory simpleBeanFactory = new SimpleBeanFactory();
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(simpleBeanFactory);
         reader.loadBeanDefinitions(resource);
-        this.beanFactory = beanFactory;
+        this.beanFactory = simpleBeanFactory;
     }
 
     @Override
@@ -39,6 +38,16 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     @Override
     public Boolean containsBean(String beanName) {
         return this.beanFactory.containsBean(beanName);
+    }
+
+    @Override
+    public boolean isSingleton(String beanName) {
+        return false;
+    }
+
+    @Override
+    public boolean isPrototype(String beanName) {
+        return false;
     }
 
 }

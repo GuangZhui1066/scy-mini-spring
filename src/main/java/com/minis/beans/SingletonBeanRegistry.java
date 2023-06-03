@@ -1,7 +1,7 @@
 package com.minis.beans;
 
 /**
- * 单例bean的注册表 (bean的仓库)
+ * 单例bean的注册表 (存放bean的仓库)
  *
  * 作用：
  *   管理单例的bean对象：注册、获取、判断是否存在

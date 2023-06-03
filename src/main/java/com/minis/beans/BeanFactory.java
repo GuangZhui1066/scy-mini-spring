@@ -18,4 +18,8 @@ public interface BeanFactory {
 
     Boolean containsBean(String beanName);
 
+    boolean isSingleton(String beanName);
+
+    boolean isPrototype(String beanName);
+
 }
