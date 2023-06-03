@@ -22,6 +22,12 @@ public class BeanDefinition {
     private String scope = SCOPE_SINGLETON;
 
 
+    /**
+     * 类的构造器参数列表
+     */
+    private ArgumentValues constructorArgumentValues;
+
+
     private String name;
 
     private String className;
@@ -50,6 +56,14 @@ public class BeanDefinition {
 
     public boolean isPrototype() {
         return SCOPE_PROTOTYPE.equals(scope);
+    }
+
+    public void setConstructorArgumentValues(ArgumentValues constructorArgumentValues) {
+        this.constructorArgumentValues = constructorArgumentValues;
+    }
+
+    public ArgumentValues getConstructorArgumentValues() {
+        return constructorArgumentValues;
     }
 
 }

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans>
-    <bean name="scyIocTestService" class="com.minis.ScyIocTestService"></bean>
+    <bean name="scyIocTestService" class="com.minis.ScyTestServiceImpl">
+        <!-- bean 的构造器参数 -->
+        <constructor-arg name="name" type="String" value="scy"/>
+        <constructor-arg name="level" type="Integer" value="25"/>
+    </bean>
 </beans>

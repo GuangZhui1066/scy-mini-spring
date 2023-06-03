@@ -1,5 +1,7 @@
 package com.minis.beans;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,16 +47,57 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         return singleton;
     }
 
-    private Object createBean(BeanDefinition bd) {
+    private Object createBean(BeanDefinition beanDefinition) {
         Object obj = null;
+        Class<?> clazz;
+        Constructor<?> constructor;
+
         try {
-            // 根据类名获取 class 对象，然后创建对象实例
-            obj = Class.forName(bd.getClassName()).newInstance();
+            // 根据类名获取 class 对象
+            clazz = Class.forName(beanDefinition.getClassName());
+
+            // 处理构造器参数
+            ArgumentValues argumentValues = beanDefinition.getConstructorArgumentValues();
+            if (!argumentValues.isEmpty()) {
+                Class<?>[] paramTypes = new Class[argumentValues.getArgumentCount()];
+                Object[] paramValues = new Object[argumentValues.getArgumentCount()];
+
+                for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
+                    ArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
+                    // 判断构造器参数的类型
+                    if ("String".equals(argumentValue.getType()) || "java.lang.String".equals(argumentValue.getType())) {
+                        paramTypes[i] = String.class;
+                        paramValues[i] = argumentValue.getValue();
+                    } else if ("Integer".equals(argumentValue.getType()) || "java.lang.Integer".equals(
+                        argumentValue.getType())) {
+                        paramTypes[i] = Integer.class;
+                        paramValues[i] = Integer.valueOf((String) argumentValue.getValue());
+                    } else if ("int".equals(argumentValue.getType())) {
+                        paramTypes[i] = int.class;
+                        paramValues[i] = Integer.valueOf((String) argumentValue.getValue());
+                    } else {
+                        // 默认为 String 类型
+                        paramTypes[i] = String.class;
+                        paramValues[i] = argumentValue.getValue();
+                    }
+                }
+
+                try {
+                    // 根据构造器创建对象实例
+                    constructor = clazz.getConstructor(paramTypes);
+                    obj = constructor.newInstance(paramValues);
+                } catch (NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                //如果没有参数，直接创建实例
+                obj = clazz.newInstance();
+            }
         } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        return obj;
 
+        return obj;
     }
 
     @Override
