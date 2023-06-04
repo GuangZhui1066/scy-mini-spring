@@ -9,6 +9,12 @@ public class ScyTestServiceImpl implements ScyTestService {
     private Integer age;
 
     /**
+     * 成员属性
+     */
+    private String property1;
+    private Integer property2;
+
+    /**
      * 类的无参构造器
      */
     public ScyTestServiceImpl() {
@@ -26,6 +32,22 @@ public class ScyTestServiceImpl implements ScyTestService {
     @Override
     public void sayHello() {
         System.out.println("hello! " + this.name + "," + this.age);
+    }
+
+    public String getProperty1() {
+        return property1;
+    }
+
+    public void setProperty1(String property1) {
+        this.property1 = property1;
+    }
+
+    public Integer getProperty2() {
+        return property2;
+    }
+
+    public void setProperty2(Integer property2) {
+        this.property2 = property2;
     }
 
 }

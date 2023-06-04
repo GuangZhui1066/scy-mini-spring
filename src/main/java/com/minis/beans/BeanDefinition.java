@@ -27,6 +27,11 @@ public class BeanDefinition {
      */
     private ArgumentValues constructorArgumentValues;
 
+    /**
+     * 类的成员变量列表
+     */
+    private PropertyValues propertyValues;
+
 
     private String name;
 
@@ -64,6 +69,14 @@ public class BeanDefinition {
 
     public ArgumentValues getConstructorArgumentValues() {
         return constructorArgumentValues;
+    }
+
+    public PropertyValues getPropertyValues() {
+        return propertyValues;
+    }
+
+    public void setPropertyValues(PropertyValues propertyValues) {
+        this.propertyValues = propertyValues;
     }
 
 }

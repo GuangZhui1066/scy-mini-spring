@@ -9,5 +9,8 @@ public class SpringTest {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
         ScyTestServiceImpl scyIocTestService = (ScyTestServiceImpl) context.getBean("scyIocTestService");
         scyIocTestService.sayHello();
+        System.out.println(scyIocTestService.getProperty1());
+        System.out.println(scyIocTestService.getProperty2());
     }
+
 }

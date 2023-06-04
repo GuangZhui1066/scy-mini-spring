@@ -32,10 +32,21 @@ public class XmlBeanDefinitionReader {
             for (Element e : constructorElements) {
                 String argumentName = e.attributeValue("name");
                 String argumentType = e.attributeValue("type");
-                String argumentValue = e.attributeValue("value");
+                Object argumentValue = e.attributeValue("value");
                 argumentValues.addArgumentValue(new ArgumentValue(argumentName, argumentType, argumentValue));
             }
             beanDefinition.setConstructorArgumentValues(argumentValues);
+
+            // 解析成员属性
+            List<Element> propertyElements = element.elements("property");
+            PropertyValues propertyValues = new PropertyValues();
+            for (Element e : propertyElements) {
+                String propertyName = e.attributeValue("name");
+                String propertyType = e.attributeValue("type");
+                Object propertyValue = e.attributeValue("value");
+                propertyValues.addPropertyValue(new PropertyValue(propertyName, propertyType, propertyValue));
+            }
+            beanDefinition.setPropertyValues(propertyValues);
 
             // 注册 beanDefinition 到仓库
             this.simpleBeanFactory.registerBeanDefinition(beanName, beanDefinition);

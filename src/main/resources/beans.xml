@@ -5,5 +5,8 @@
         <!-- bean 的构造器参数 -->
         <constructor-arg name="name" type="String" value="scy"/>
         <constructor-arg name="level" type="Integer" value="25"/>
+        <!-- bean 的成员属性 -->
+        <property name="property1" type="String" value="Scy"/>
+        <property name="property2" type="Integer" value="25"/>
     </bean>
 </beans>

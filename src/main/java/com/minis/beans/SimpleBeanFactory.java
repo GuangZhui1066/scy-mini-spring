@@ -2,6 +2,7 @@ package com.minis.beans;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,19 +82,51 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                         paramValues[i] = argumentValue.getValue();
                     }
                 }
-
                 try {
                     // 根据构造器创建对象实例
                     constructor = clazz.getConstructor(paramTypes);
                     obj = constructor.newInstance(paramValues);
-                } catch (NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+                } catch (InstantiationException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
             } else {
-                //如果没有参数，直接创建实例
+                // 如果没有参数，调用无参构造器创建实例
                 obj = clazz.newInstance();
             }
-        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
+
+            // 处理成员变量
+            PropertyValues propertyValues = beanDefinition.getPropertyValues();
+            if (!propertyValues.isEmpty()) {
+                for (int i = 0; i < propertyValues.size(); i++) {
+                    //对每一个属性，分数据类型分别处理
+                    PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
+                    Class<?> paramType;
+                    Object paramValue;
+                    if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(propertyValue.getType())) {
+                        paramType = String.class;
+                        paramValue = propertyValue.getValue();
+                    } else if ("Integer".equals(propertyValue.getType()) || "java.lang.Integer".equals(propertyValue.getType())) {
+                        paramType = Integer.class;
+                        paramValue = Integer.valueOf((String) propertyValue.getValue());
+                    } else if ("int".equals(propertyValue.getType())) {
+                        paramType = int.class;
+                        paramValue = Integer.valueOf((String) propertyValue.getValue());
+                    } else {
+                        // 默认为 String
+                        paramType = String.class;
+                        paramValue = propertyValue.getValue();
+                    }
+                    try {
+                        // 查找此属性对应的 setter 方法，并调用 setter 方法为属性设置值
+                        String methodName = "set" + propertyValue.getName().substring(0, 1).toUpperCase() + propertyValue.getName().substring(1);
+                        Method method = clazz.getMethod(methodName, paramType);
+                        method.invoke(obj, paramValue);
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
