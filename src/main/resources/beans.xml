@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans>
-    <!-- scyIocTestService -->
+    <!-- scyTestService -->
     <bean name="scyTestService" class="com.minis.ScyTestServiceImpl">
         <!-- bean 的构造器参数 -->
         <constructor-arg name="name" type="String" value="scy"/>
@@ -14,5 +14,12 @@
     </bean>
 
     <!-- scyBaseService -->
-    <bean name="scyBaseService" class="com.minis.ScyBaseService" />
+    <bean name="scyBaseService" class="com.minis.ScyBaseService">
+        <property name="circleService" type="com.minis.ScyCircleService" ref="scyCircleService"/>
+    </bean>
+
+    <!-- scyCircleService -->
+    <bean name="scyCircleService" class="com.minis.ScyCircleService">
+        <property name="testService" type="com.minis.ScyTestServiceImpl" ref="scyTestService"/>
+    </bean>
 </beans>

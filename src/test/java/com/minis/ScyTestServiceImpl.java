@@ -23,6 +23,7 @@ public class ScyTestServiceImpl implements ScyTestService {
      * 类的无参构造器
      */
     public ScyTestServiceImpl() {
+        System.out.println("ScyTestService constructor. no arguments.");
     }
 
     /**
@@ -31,7 +32,7 @@ public class ScyTestServiceImpl implements ScyTestService {
     public ScyTestServiceImpl(String name, Integer age) {
         this.name = name;
         this.age = age;
-        System.out.println("constructor: " + this.name + "," + this.age);
+        System.out.println("ScyTestService constructor. arguments: " + this.name + "," + this.age);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class ScyTestServiceImpl implements ScyTestService {
 
     public void setBaseService(ScyBaseService baseService) {
         this.baseService = baseService;
+        System.out.println("ScyTestService setBaseService done.");
     }
 
 }
