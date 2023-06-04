@@ -48,6 +48,9 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         return singleton;
     }
 
+    /**
+     * 依赖注入(由框架而不是使用者来创建bean) 的原理是反射
+     */
     private Object createBean(BeanDefinition beanDefinition) {
         Object obj = null;
         Class<?> clazz;
