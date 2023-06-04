@@ -15,6 +15,11 @@ public class ScyTestServiceImpl implements ScyTestService {
     private Integer property2;
 
     /**
+     * 依赖的bean
+     */
+    private ScyBaseService baseService;
+
+    /**
      * 类的无参构造器
      */
     public ScyTestServiceImpl() {
@@ -48,6 +53,14 @@ public class ScyTestServiceImpl implements ScyTestService {
 
     public void setProperty2(Integer property2) {
         this.property2 = property2;
+    }
+
+    public ScyBaseService getBaseService() {
+        return baseService;
+    }
+
+    public void setBaseService(ScyBaseService baseService) {
+        this.baseService = baseService;
     }
 
 }

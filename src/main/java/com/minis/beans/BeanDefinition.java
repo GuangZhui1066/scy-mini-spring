@@ -16,8 +16,13 @@ public class BeanDefinition {
      * 是否在加载的时候初始化
      *   true:
      *   false: 在加载的时候就要初始化
+     *
+     * 这里需要设置为 true，否则在注册 scyTestService 的 beanDefinition 的时候就会实例化 scyTestService 对象
+     * 实例化 scyTestService 对象时就需要实例化其成员变量 scyBaseService，但此时 scyBaseService 的 beanDefinition 还没有被注册，所以会报错
+     * 因为 bean.xml 中 scyTestService 的定义在 scyBaseService 之前，XmlBeanDefinitionReader 是按顺序注册 beanDefinition 的
+     * 将 lazyInit 设置为 true 后，Spring就会先将 bean.xml 中定义的所有 bean 的 beanDefinition 注册好，然后使用 bean 时再去实例化 bean
      */
-    private boolean lazyInit = false;
+    private boolean lazyInit = true;
 
     private String scope = SCOPE_SINGLETON;
 
@@ -31,6 +36,11 @@ public class BeanDefinition {
      * 类的成员变量列表
      */
     private PropertyValues propertyValues;
+
+    /**
+     * 依赖的bean
+     */
+    private String[] dependsOn;
 
 
     private String name;
@@ -77,6 +87,14 @@ public class BeanDefinition {
 
     public void setPropertyValues(PropertyValues propertyValues) {
         this.propertyValues = propertyValues;
+    }
+
+    public String[] getDependsOn() {
+        return dependsOn;
+    }
+
+    public void setDependsOn(String[] dependsOn) {
+        this.dependsOn = dependsOn;
     }
 
 }
