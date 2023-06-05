@@ -35,6 +35,18 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     public SimpleBeanFactory() {
     }
 
+    /**
+     * 把注册过的所有 bean 都创建出来
+     */
+    public void refresh() {
+        for (String beanName : beanDefinitionNames) {
+            try {
+                getBean(beanName);
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * 容器的核心方法
