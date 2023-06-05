@@ -21,6 +21,10 @@ package com.minis;
  *     4. 为实例化出的 ScyBaseService 对象注入其 circleService 属性，完成 ScyBaseService 的实例化
  *     5. 为实例化出的 ScyTestService 对象注入其 baseService 属性，完成 ScyTestService 的实例化
  *     6. 至此，完成了三个bean的实例化～～
+ *
+ * 思考：
+ *   循环依赖只能通过属性注入的方式去解，用构造器注入的方式无法解决循环依赖的问题
+ *   所以 Spring 不支持构造器注入的循环依赖
  */
 public class ScyCircleService {
 
@@ -28,13 +32,13 @@ public class ScyCircleService {
         System.out.println("ScyCircleService constructor. no arguments.");
     }
 
-    private ScyTestService testService;
+    private ScyTestServiceImpl testService;
 
     public ScyTestService getTestService() {
         return testService;
     }
 
-    public void setTestService(ScyTestService testService) {
+    public void setTestService(ScyTestServiceImpl testService) {
         this.testService = testService;
         System.out.println("ScyCircleService setTestService done.");
     }

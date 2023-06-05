@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,13 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
      */
     private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
+    /**
+     * 二级缓存
+     *   存放已经实例化、但是有部分属性没有被赋值的 bean
+     */
+    private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
+
+
     public SimpleBeanFactory() {
     }
 
@@ -36,14 +44,20 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         // 先尝试直接拿 bean 实例
         Object singleton = this.getSingleton(beanName);
 
-        // 此时还没有这个 bean 的实例，需要创建实例
+        // 此时这个 bean 还没有实例化完成 (没有实例化对象 / 有实例化对象但是其所有属性没有被全部赋值)
         if (singleton == null) {
-            // 获取 bean 的定义
-            BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanName);
-            // 根据bean的定义创建bean的实例
-            singleton = createBean(beanDefinition);
-            // 把这个bean实例保存到bean的仓库中
-            this.registerBean(beanName, singleton);
+            // 从二级缓存中获取没有完全实例化的毛坯 bean
+            singleton = this.earlySingletonObjects.get(beanName);
+
+            // 二级缓存中没有，说明这个 bean 还没有被创建，就创建这个 bean
+            if (singleton == null) {
+                // 获取 bean 的定义
+                BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanName);
+                // 根据bean的定义创建bean的实例
+                singleton = createBean(beanDefinition);
+                // 把这个bean实例保存到bean的仓库中
+                this.registerBean(beanName, singleton);
+            }
         }
         return singleton;
     }
@@ -52,6 +66,26 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
      * 依赖注入(由框架而不是使用者来创建bean) 的原理是反射
      */
     private Object createBean(BeanDefinition beanDefinition) {
+        Class<?> clazz = null;
+        // 使用构造器创建毛坯bean
+        Object obj = doCreateBean(beanDefinition);
+
+        // 把毛坯bean放入二级缓存
+        this.earlySingletonObjects.put(beanDefinition.getName(), obj);
+
+        try {
+            clazz = Class.forName(beanDefinition.getClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // 为 bean 的属性赋值
+        handleProperties(beanDefinition, clazz, obj);
+
+        return obj;
+    }
+
+    private Object doCreateBean(BeanDefinition beanDefinition) {
         Object obj = null;
         Class<?> clazz;
         Constructor<?> constructor;
@@ -96,52 +130,61 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 // 如果没有参数，调用无参构造器创建实例
                 obj = clazz.newInstance();
             }
-
-            // 处理成员变量
-            PropertyValues propertyValues = beanDefinition.getPropertyValues();
-            if (!propertyValues.isEmpty()) {
-                for (int i = 0; i < propertyValues.size(); i++) {
-                    // 对每一个属性，分数据类型分别处理
-                    PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
-                    Class<?> paramType;
-                    Object paramValue;
-                    // 非引用类型的属性
-                    if (!propertyValue.isRef()) {
-                        if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(propertyValue.getType())) {
-                            paramType = String.class;
-                            paramValue = propertyValue.getValue();
-                        } else if ("Integer".equals(propertyValue.getType()) || "java.lang.Integer".equals(propertyValue.getType())) {
-                            paramType = Integer.class;
-                            paramValue = Integer.valueOf((String) propertyValue.getValue());
-                        } else if ("int".equals(propertyValue.getType())) {
-                            paramType = int.class;
-                            paramValue = Integer.valueOf((String) propertyValue.getValue());
-                        } else {
-                            // 默认为 String
-                            paramType = String.class;
-                            paramValue = propertyValue.getValue();
-                        }
-                    }
-                    // 引用类型的属性
-                    else {
-                        paramType = Class.forName(propertyValue.getType());
-                        paramValue = getBean((String) propertyValue.getValue());
-                    }
-                    try {
-                        // 查找此属性对应的 setter 方法，并调用 setter 方法为属性设置值
-                        String methodName = "set" + propertyValue.getName().substring(0, 1).toUpperCase() + propertyValue.getName().substring(1);
-                        Method method = clazz.getMethod(methodName, paramType);
-                        method.invoke(obj, paramValue);
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return obj;
+    }
+
+    private void handleProperties(BeanDefinition beanDefinition, Class<?> clazz, Object obj) {
+        // 处理成员变量
+        PropertyValues propertyValues = beanDefinition.getPropertyValues();
+        if (!propertyValues.isEmpty()) {
+            for (int i = 0; i < propertyValues.size(); i++) {
+                // 对每一个属性，分数据类型分别处理
+                PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
+                Class<?> paramType = null;
+                Object paramValue = null;
+                // 非引用类型的属性
+                if (!propertyValue.isRef()) {
+                    if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(
+                        propertyValue.getType())) {
+                        paramType = String.class;
+                        paramValue = propertyValue.getValue();
+                    } else if ("Integer".equals(propertyValue.getType()) || "java.lang.Integer".equals(
+                        propertyValue.getType())) {
+                        paramType = Integer.class;
+                        paramValue = Integer.valueOf((String)propertyValue.getValue());
+                    } else if ("int".equals(propertyValue.getType())) {
+                        paramType = int.class;
+                        paramValue = Integer.valueOf((String)propertyValue.getValue());
+                    } else {
+                        // 默认为 String
+                        paramType = String.class;
+                        paramValue = propertyValue.getValue();
+                    }
+                }
+                // 引用类型的属性
+                else {
+                    try {
+                        paramType = Class.forName(propertyValue.getType());
+                        paramValue = getBean((String) propertyValue.getValue());
+                    } catch (ClassNotFoundException | BeansException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    // 查找此属性对应的 setter 方法，并调用 setter 方法为属性设置值
+                    String methodName = "set" + propertyValue.getName().substring(0, 1).toUpperCase() + propertyValue
+                        .getName().substring(1);
+                    Method method = clazz.getMethod(methodName, paramType);
+                    method.invoke(obj, paramValue);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
