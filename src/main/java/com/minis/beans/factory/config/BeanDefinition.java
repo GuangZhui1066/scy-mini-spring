@@ -1,4 +1,6 @@
-package com.minis.beans;
+package com.minis.beans.factory.config;
+
+import com.minis.beans.PropertyValues;
 
 public class BeanDefinition {
 
@@ -30,7 +32,7 @@ public class BeanDefinition {
     /**
      * 类的构造器参数列表
      */
-    private ArgumentValues constructorArgumentValues;
+    private ConstructorArgumentValues constructorArgumentValues;
 
     /**
      * 类的成员变量列表
@@ -73,11 +75,11 @@ public class BeanDefinition {
         return SCOPE_PROTOTYPE.equals(scope);
     }
 
-    public void setConstructorArgumentValues(ArgumentValues constructorArgumentValues) {
+    public void setConstructorArgumentValues(ConstructorArgumentValues constructorArgumentValues) {
         this.constructorArgumentValues = constructorArgumentValues;
     }
 
-    public ArgumentValues getConstructorArgumentValues() {
+    public ConstructorArgumentValues getConstructorArgumentValues() {
         return constructorArgumentValues;
     }
 

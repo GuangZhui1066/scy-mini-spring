@@ -1,19 +1,19 @@
-package com.minis.beans;
+package com.minis.beans.factory.config;
 
 /**
  * 类的构造器参数
  */
-public class ArgumentValue {
+public class ConstructorArgumentValue {
 
     private String name;
     private String type;
     private Object value;
 
-    public ArgumentValue(String type, Object value) {
+    public ConstructorArgumentValue(String type, Object value) {
         this.type = type;
         this.value = value;
     }
-    public ArgumentValue( String name, String type, Object value) {
+    public ConstructorArgumentValue( String name, String type, Object value) {
         this.type = type;
         this.name = name;
         this.value = value;

@@ -1,8 +1,14 @@
-package com.minis.beans;
+package com.minis.beans.factory.xml;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.minis.beans.factory.config.ConstructorArgumentValue;
+import com.minis.beans.factory.config.ConstructorArgumentValues;
+import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.PropertyValue;
+import com.minis.beans.PropertyValues;
+import com.minis.beans.factory.support.SimpleBeanFactory;
 import com.minis.core.Resource;
 import org.dom4j.Element;
 
@@ -29,14 +35,14 @@ public class XmlBeanDefinitionReader {
 
             // 解析构造器参数
             List<Element> constructorElements = element.elements("constructor-arg");
-            ArgumentValues argumentValues = new ArgumentValues();
+            ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
             for (Element e : constructorElements) {
                 String argumentName = e.attributeValue("name");
                 String argumentType = e.attributeValue("type");
                 String argumentValue = e.attributeValue("value");
-                argumentValues.addArgumentValue(new ArgumentValue(argumentName, argumentType, argumentValue));
+                constructorArgumentValues.addArgumentValue(new ConstructorArgumentValue(argumentName, argumentType, argumentValue));
             }
-            beanDefinition.setConstructorArgumentValues(argumentValues);
+            beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
 
             // 解析成员属性
             List<Element> propertyElements = element.elements("property");

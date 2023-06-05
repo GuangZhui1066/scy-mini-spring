@@ -1,4 +1,6 @@
-package com.minis.beans;
+package com.minis.beans.factory;
+
+import com.minis.beans.BeansException;
 
 /**
  * IoC 容器 (bean的工厂类)
@@ -8,7 +10,7 @@ package com.minis.beans;
  *
  * 方法：
  *   方法一：获取一个 bean
- *   方法二：注册一个 BeanDefinition
+ *   方法二：注册一个 bean
  */
 public interface BeanFactory {
 

@@ -1,4 +1,4 @@
-package com.minis.beans;
+package com.minis.beans.factory.config;
 
 /**
  * 单例bean的注册表 (存放bean的仓库)
