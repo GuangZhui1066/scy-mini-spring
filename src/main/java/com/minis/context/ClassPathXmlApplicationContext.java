@@ -1,8 +1,8 @@
 package com.minis.context;
 
-import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.BeansException;
-import com.minis.beans.factory.support.SimpleBeanFactory;
+import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.support.AbstractBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
@@ -15,7 +15,7 @@ import com.minis.core.Resource;
  */
 public class ClassPathXmlApplicationContext implements BeanFactory {
 
-    SimpleBeanFactory beanFactory;
+    AbstractBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
         this(fileName, true);
@@ -23,10 +23,10 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
 
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         Resource resource = new ClassPathXmlResource(fileName);
-        SimpleBeanFactory simpleBeanFactory = new SimpleBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(simpleBeanFactory);
+        AbstractBeanFactory abstractBeanFactory = new AbstractBeanFactory();
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(abstractBeanFactory);
         reader.loadBeanDefinitions(resource);
-        this.beanFactory = simpleBeanFactory;
+        this.beanFactory = abstractBeanFactory;
 
         if (isRefresh) {
             this.beanFactory.refresh();

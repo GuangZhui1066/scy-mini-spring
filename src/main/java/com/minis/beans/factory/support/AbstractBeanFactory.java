@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.minis.beans.factory.config.ConstructorArgumentValue;
-import com.minis.beans.factory.config.ConstructorArgumentValues;
-import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.factory.config.ConstructorArgumentValue;
+import com.minis.beans.factory.config.ConstructorArgumentValues;
 
 /**
  * 简单的 BeanFactory 实现类
@@ -24,7 +24,7 @@ import com.minis.beans.factory.BeanFactory;
  *
  * 实现了 BeanFactory 接口和 BeanDefinitionRegistry 接口，所以它即是 bean 的工厂也是 bean 的仓库。
  */
-public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
+public class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
 
     private List<String> beanDefinitionNames = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
 
-    public SimpleBeanFactory() {
+    public AbstractBeanFactory() {
     }
 
     /**
@@ -123,12 +123,10 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 for (int i = 0; i < constructorArgumentValues.getArgumentCount(); i++) {
                     ConstructorArgumentValue constructorArgumentValue = constructorArgumentValues.getIndexedArgumentValue(i);
                     // 判断构造器参数的类型
-                    if ("String".equals(constructorArgumentValue.getType()) || "java.lang.String".equals(
-                        constructorArgumentValue.getType())) {
+                    if ("String".equals(constructorArgumentValue.getType()) || "java.lang.String".equals(constructorArgumentValue.getType())) {
                         paramTypes[i] = String.class;
                         paramValues[i] = constructorArgumentValue.getValue();
-                    } else if ("Integer".equals(constructorArgumentValue.getType()) || "java.lang.Integer".equals(
-                        constructorArgumentValue.getType())) {
+                    } else if ("Integer".equals(constructorArgumentValue.getType()) || "java.lang.Integer".equals(constructorArgumentValue.getType())) {
                         paramTypes[i] = Integer.class;
                         paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
                     } else if ("int".equals(constructorArgumentValue.getType())) {
@@ -169,12 +167,10 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 Object paramValue = null;
                 // 非引用类型的属性
                 if (!propertyValue.isRef()) {
-                    if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(
-                        propertyValue.getType())) {
+                    if ("String".equals(propertyValue.getType()) || "java.lang.String".equals(propertyValue.getType())) {
                         paramType = String.class;
                         paramValue = propertyValue.getValue();
-                    } else if ("Integer".equals(propertyValue.getType()) || "java.lang.Integer".equals(
-                        propertyValue.getType())) {
+                    } else if ("Integer".equals(propertyValue.getType()) || "java.lang.Integer".equals(propertyValue.getType())) {
                         paramType = Integer.class;
                         paramValue = Integer.valueOf((String)propertyValue.getValue());
                     } else if ("int".equals(propertyValue.getType())) {
@@ -197,8 +193,8 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 }
                 try {
                     // 查找此属性对应的 setter 方法，并调用 setter 方法为属性设置值
-                    String methodName = "set" + propertyValue.getName().substring(0, 1).toUpperCase() + propertyValue
-                        .getName().substring(1);
+                    String methodName = "set" + propertyValue.getName().substring(0, 1).toUpperCase()
+                        + propertyValue.getName().substring(1);
                     Method method = clazz.getMethod(methodName, paramType);
                     method.invoke(obj, paramValue);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
