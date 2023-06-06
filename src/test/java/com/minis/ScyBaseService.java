@@ -2,7 +2,7 @@ package com.minis;
 
 public class ScyBaseService {
 
-    private ScyCircleService circleService;
+    private ScyCircleService scyCircleService;
 
     public ScyBaseService() {
         System.out.println("ScyBaseService constructor. no arguments.");
@@ -12,12 +12,12 @@ public class ScyBaseService {
         return "hello, baseService success.";
     }
 
-    public ScyCircleService getCircleService() {
-        return circleService;
+    public ScyCircleService getScyCircleService() {
+        return scyCircleService;
     }
 
-    public void setCircleService(ScyCircleService circleService) {
-        this.circleService = circleService;
+    public void setScyCircleService(ScyCircleService scyCircleService) {
+        this.scyCircleService = scyCircleService;
         System.out.println("ScyBaseService setCircleService done.");
     }
 

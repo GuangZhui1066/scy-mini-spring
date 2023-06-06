@@ -1,5 +1,7 @@
 package com.minis;
 
+import com.minis.beans.factory.annotation.Autowired;
+
 /**
  * 测试循环依赖
  *   ScyTestService 依赖 ScyBaseService，ScyBaseService 又依赖 ScyCircleService，ScyCircleService 又依赖 ScyTestService，
@@ -11,7 +13,7 @@ package com.minis;
  *   这样就造成了死循环。
  *
  * 解决办法：
- *   在实例化上面的几个 bean 时，都是已经创建出了实例化对象，但是只为其注入了部分属性，没有完全实例化完成，所以它们没有被注册到 bean 的仓库中，
+ *   在实例化上面的几个 bean 时，都是已经用构造器创建出了实例化对象，但是只为其注入了部分属性，没有完全实例化完成，所以它们没有被注册到 bean 的仓库中，
  *   导致在实例化依赖它的 bean 时，无法从 bean 仓库获取到已经创建好的对象，又去重新创建新的对象。
  *   所以我们在bean仓库中引入 earlySingletonObjects，存放那些已经创建出、但是没有完全注入所有属性的毛坯实例。
  *   这样，三个循环依赖的 bean 的创建过程如下：
@@ -32,14 +34,15 @@ public class ScyCircleService {
         System.out.println("ScyCircleService constructor. no arguments.");
     }
 
-    private ScyTestServiceImpl testService;
+    @Autowired
+    private ScyTestServiceImpl scyTestService;
 
-    public ScyTestService getTestService() {
-        return testService;
+    public ScyTestService getScyTestService() {
+        return scyTestService;
     }
 
-    public void setTestService(ScyTestServiceImpl testService) {
-        this.testService = testService;
+    public void setScyTestService(ScyTestServiceImpl scyTestService) {
+        this.scyTestService = scyTestService;
         System.out.println("ScyCircleService setTestService done.");
     }
 

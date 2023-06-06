@@ -13,11 +13,11 @@ public class SpringTest {
         System.out.println(scyTestService.getProperty1());
         System.out.println(scyTestService.getProperty2());
 
-        ScyBaseService baseService = scyTestService.getBaseService();
+        ScyBaseService baseService = scyTestService.getScyBaseService();
         System.out.println(baseService.baseHello());
 
-        ScyCircleService circleService = baseService.getCircleService();
-        circleService.getTestService().sayHello();
+        ScyCircleService circleService = baseService.getScyCircleService();
+        circleService.getScyTestService().sayHello();
     }
 
 }

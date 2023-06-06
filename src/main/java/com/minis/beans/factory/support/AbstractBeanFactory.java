@@ -18,13 +18,15 @@ import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
 
 /**
- * 简单的 BeanFactory 实现类
+ * BeanFactory 的抽象实现类
  *
- * 继承 DefaultSingletonBeanRegistry，默认创建出的所有 bean 都是单例的.
+ * 继承 DefaultSingletonBeanRegistry，默认创建出的所有 bean 都是单例的
+ * 实现了 BeanFactory 接口和 BeanDefinitionRegistry 接口，所以它即是 bean 的工厂也是 bean 的仓库
  *
- * 实现了 BeanFactory 接口和 BeanDefinitionRegistry 接口，所以它即是 bean 的工厂也是 bean 的仓库。
+ * 作为抽象类，其提供了 BeanFactory, BeanDefinitionRegistry 等基础接口中 refresh(), getBean() 等方法的默认实现
+ * 使得其他的实现类不需要再去实现这些方法
  */
-public class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
 
     private List<String> beanDefinitionNames = new ArrayList<>();
 
@@ -35,7 +37,7 @@ public class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements
 
     /**
      * 二级缓存
-     *   存放已经实例化、但是有部分属性没有被赋值的 bean
+     *   存放已经用构造器(有参构造器或无参构造器)实例化、但是有部分属性没有被赋值的 bean
      */
     private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -58,6 +60,11 @@ public class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements
 
     /**
      * 容器的核心方法
+     *
+     * 创建bean的步骤：
+     *   1. 调用构造器创建出bean的实例
+     *   2. 把这个实例对象放入二级缓存
+     *   3. 对这个实例对象的属性进行赋值 (包括定义在beans.xml中通过setter注入的属性，也包括被@Autowire修饰的自动注入的属性)
      */
     @Override
     public Object getBean(String beanName) throws BeansException {
@@ -77,6 +84,12 @@ public class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements
                 singleton = createBean(beanDefinition);
                 // 把这个bean实例保存到bean的仓库中
                 this.registerBean(beanName, singleton);
+
+                // 执行 BeanPostProcessor
+                //   1. 在初始化之前处理 bean
+                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                //   2. 在初始化之后处理 bean
+                applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
         return singleton;
@@ -253,5 +266,9 @@ public class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements
     public boolean containsBeanDefinition(String beanName) {
         return this.beanDefinitionMap.containsKey(beanName);
     }
+
+    abstract public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException;
+
+    abstract public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException;
 
 }

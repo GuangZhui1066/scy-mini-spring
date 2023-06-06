@@ -17,7 +17,7 @@ public class ScyTestServiceImpl implements ScyTestService {
     /**
      * 依赖的bean
      */
-    private ScyBaseService baseService;
+    private ScyBaseService scyBaseService;
 
     /**
      * 类的无参构造器
@@ -56,12 +56,12 @@ public class ScyTestServiceImpl implements ScyTestService {
         this.property2 = property2;
     }
 
-    public ScyBaseService getBaseService() {
-        return baseService;
+    public ScyBaseService getScyBaseService() {
+        return scyBaseService;
     }
 
-    public void setBaseService(ScyBaseService baseService) {
-        this.baseService = baseService;
+    public void setScyBaseService(ScyBaseService scyBaseService) {
+        this.scyBaseService = scyBaseService;
         System.out.println("ScyTestService setBaseService done.");
     }
 

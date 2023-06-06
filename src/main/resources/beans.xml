@@ -10,16 +10,16 @@
         <property name="property1" type="String" value="Scy"/>
         <property name="property2" type="Integer" value="25"/>
         <!-- bean 的成员属性也是一个 bean -->
-        <property name="baseService" type="com.minis.ScyBaseService" ref="scyBaseService"/>
+        <property name="scyBaseService" type="com.minis.ScyBaseService" ref="scyBaseService"/>
     </bean>
 
     <!-- scyBaseService -->
     <bean name="scyBaseService" class="com.minis.ScyBaseService">
-        <property name="circleService" type="com.minis.ScyCircleService" ref="scyCircleService"/>
+        <property name="scyCircleService" type="com.minis.ScyCircleService" ref="scyCircleService"/>
     </bean>
 
     <!-- scyCircleService -->
     <bean name="scyCircleService" class="com.minis.ScyCircleService">
-        <property name="testService" type="com.minis.ScyTestServiceImpl" ref="scyTestService"/>
+        <!-- <property name="scyTestService" type="com.minis.ScyTestServiceImpl" ref="scyTestService"/> -->
     </bean>
 </beans>
