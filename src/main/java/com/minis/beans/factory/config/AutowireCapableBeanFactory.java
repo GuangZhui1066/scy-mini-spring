@@ -9,9 +9,11 @@ import com.minis.beans.factory.support.AbstractBeanFactory;
 
 /**
  * bean 工厂
- * 用于构造 —— 具有部分属性被 @Autowired 修饰的 bean
  *
- * 继承了 AbstractBeanFactory，可以直接使用其创建bean、注册beanDefinition等方法
+ * 作用:
+ *   用于构造 —— 具有部分属性被 @Autowired 修饰的 bean
+ *   在基础的 AbstractBeanFactory 的基础上添加了支持@Autowired注解的特性
+ *   继承了 AbstractBeanFactory，可以直接使用其创建bean、注册beanDefinition等方法
  */
 public class AutowireCapableBeanFactory extends AbstractBeanFactory {
 
