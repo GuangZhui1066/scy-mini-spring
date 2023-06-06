@@ -2,7 +2,7 @@
 
 <beans>
     <!-- scyTestService -->
-    <bean name="scyTestService" class="com.minis.ScyTestServiceImpl">
+    <bean name="scyTestService" class="com.minis.ScyTestServiceImpl" init-method="initScyTestService">
         <!-- bean 的构造器参数 -->
         <constructor-arg name="name" type="String" value="scy"/>
         <constructor-arg name="level" type="Integer" value="25"/>

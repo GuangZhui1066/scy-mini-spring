@@ -35,6 +35,14 @@ public class ScyTestServiceImpl implements ScyTestService {
         System.out.println("ScyTestService constructor. arguments: " + this.name + "," + this.age);
     }
 
+    /**
+     * init 方法
+     */
+    public void initScyTestService() {
+        this.setProperty1("after init-method: " + this.getProperty1());
+        System.out.println("ScyTestService init-method done.");
+    }
+
     @Override
     public void sayHello() {
         System.out.println("hello! " + this.name + "," + this.age);

@@ -88,11 +88,26 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 // 执行 BeanPostProcessor
                 //   1. 在初始化之前处理 bean
                 applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
-                //   2. 在初始化之后处理 bean
+                //   2. 执行初始化方法
+                if (beanDefinition.getInitMethodName() != null && !"".equals(beanDefinition.getInitMethodName())) {
+                    invokeInitMethod(beanDefinition, singleton);
+                }
+                //   3. 在初始化之后处理 bean
                 applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
         return singleton;
+    }
+
+    private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
+        Class clazz = obj.getClass();
+        Method method;
+        try {
+            method = clazz.getMethod(beanDefinition.getInitMethodName());
+            method.invoke(obj);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

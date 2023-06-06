@@ -44,6 +44,16 @@ public class BeanDefinition {
      */
     private String[] dependsOn;
 
+    /**
+     * bean在初始化时要执行的方法的方法名
+     *
+     * 注意：
+     *   1. init 方法不是构造方法，其在构造器创建出对象之后才执行
+     *   2. init 方法没有参数，且必须是 public 的
+     *   3. init 方法的方法名可以自定义
+     */
+    private String initMethodName;
+
 
     private String name;
 
@@ -97,6 +107,14 @@ public class BeanDefinition {
 
     public void setDependsOn(String[] dependsOn) {
         this.dependsOn = dependsOn;
+    }
+
+    public String getInitMethodName() {
+        return initMethodName;
+    }
+
+    public void setInitMethodName(String initMethodName) {
+        this.initMethodName = initMethodName;
     }
 
 }
