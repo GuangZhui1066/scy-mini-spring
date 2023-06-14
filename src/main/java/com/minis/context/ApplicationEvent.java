@@ -7,8 +7,11 @@ import java.util.EventObject;
  */
 public class ApplicationEvent extends EventObject {
 
+    protected String msg = null;
+
     public ApplicationEvent(Object event) {
         super(event);
+        this.msg = event.toString();
     }
 
 }
