@@ -3,8 +3,8 @@ package com.minis.context;
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import com.minis.beans.factory.config.AutowireCapableBeanFactory;
 import com.minis.beans.factory.support.AbstractBeanFactory;
+import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
@@ -25,11 +25,11 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
 
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         Resource resource = new ClassPathXmlResource(fileName);
-        AutowireCapableBeanFactory autowireCapableBeanFactory = new AutowireCapableBeanFactory();
-        autowireCapableBeanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(autowireCapableBeanFactory);
+        DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
+        defaultListableBeanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(defaultListableBeanFactory);
         reader.loadBeanDefinitions(resource);
-        this.beanFactory = autowireCapableBeanFactory;
+        this.beanFactory = defaultListableBeanFactory;
 
         if (isRefresh) {
             this.beanFactory.refresh();

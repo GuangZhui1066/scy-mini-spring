@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
-import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.factory.config.ConfigurableBeanFactory;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
 
@@ -26,14 +26,15 @@ import com.minis.beans.factory.config.ConstructorArgumentValues;
  * 作为抽象类，其提供了 BeanFactory, BeanDefinitionRegistry 等基础接口中 refresh(), getBean() 等方法的默认实现
  * 使得其他的实现类不需要再去实现这些方法
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
+public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
+    implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
-    private List<String> beanDefinitionNames = new ArrayList<>();
+    protected List<String> beanDefinitionNames = new ArrayList<>();
 
     /**
      * 用 ConcurrentHashMap，确保多线程并发情况下的安全性
      */
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+    protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
     /**
      * 二级缓存
@@ -96,11 +97,14 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                 applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
+        if (singleton == null) {
+            throw new BeansException("bean is null. beanName: " + beanName);
+        }
         return singleton;
     }
 
     private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
-        Class clazz = obj.getClass();
+        Class<?> clazz = obj.getClass();
         Method method;
         try {
             method = clazz.getMethod(beanDefinition.getInitMethodName());
