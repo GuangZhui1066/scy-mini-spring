@@ -18,9 +18,21 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     protected Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
+    /**
+     * 保存 Bean 的包含关系：key 是 Bean 的名称，value 是 Bean 里面包含的其它 Bean 的名称集合
+     */
+    protected Map<String, Set<String>> containedBeanMap = new ConcurrentHashMap<>(16);
+
+    /**
+     * 保存 Bean 的依赖关系：key 是 Bean 的名称，value 是依赖于该 Bean 的其它 Bean 的名称集合
+     */
     protected Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
 
+    /**
+     * 保存 Bean 的依赖关系：key 是 Bean 的名称，value 是该 Bean 所依赖的其它 Bean 名称集合
+     */
     protected Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
+
 
     @Override
     public void registerSingleton(String beanName, Object singletonObject) {
@@ -58,6 +70,9 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         }
     }
 
+    /**
+     * 保存具有依赖关系的 Bean
+     */
     public void registerDependentBean(String beanName, String dependentBeanName) {
         Set<String> dependentBeans = this.dependentBeanMap.get(beanName);
         if (dependentBeans != null && dependentBeans.contains(dependentBeanName)) {
@@ -81,7 +96,6 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             }
             dependenciesForBean.add(beanName);
         }
-
     }
 
     public boolean hasDependentBean(String beanName) {
@@ -102,6 +116,20 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             return new String[0];
         }
         return dependenciesForBean.toArray(new String[0]);
+    }
+
+    /**
+     * 保存具有包含关系的 Bean（内部类与外部类）
+     */
+    public void registerContainedBean(String containedBeanName, String containingBeanName) {
+        synchronized (this.containedBeanMap) {
+            Set<String> containedBeans =
+                this.containedBeanMap.computeIfAbsent(containingBeanName, k -> new LinkedHashSet<>(8));
+            if (!containedBeans.add(containedBeanName)) {
+                return;
+            }
+        }
+        registerDependentBean(containedBeanName, containingBeanName);
     }
 
 }
