@@ -18,9 +18,9 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     protected Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-    protected Map<String,Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
+    protected Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
 
-    protected Map<String,Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
+    protected Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
 
     @Override
     public void registerSingleton(String beanName, Object singletonObject) {
@@ -48,7 +48,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     @Override
     public String[] getSingletonNames() {
-        return (String[])this.beanNames.toArray();
+        return this.beanNames.toArray(new String[0]);
     }
 
     protected void removeSingleton(String beanName) {

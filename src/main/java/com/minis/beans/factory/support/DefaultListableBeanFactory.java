@@ -31,7 +31,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         List<String> result = new ArrayList<>();
         for (String beanName : this.beanDefinitionNames) {
             BeanDefinition beanDefinition = this.getBeanDefinition(beanName);
-            // todo 这里有bug 需要测试
+            // todo 这里取的是 BeanDefinition 的 Class，不对
             Class<?> classToMatch = beanDefinition.getClass();
             if (type.isAssignableFrom(classToMatch)) {
                 result.add(beanName);

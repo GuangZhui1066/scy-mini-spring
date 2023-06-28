@@ -9,7 +9,7 @@ public class ScyBaseService {
     }
 
     public String baseHello() {
-        return "hello, baseService success.";
+        return "ScyBaseService baseHello!";
     }
 
     public ScyCircleService getScyCircleService() {

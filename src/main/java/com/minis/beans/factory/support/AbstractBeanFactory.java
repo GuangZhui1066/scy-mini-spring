@@ -236,7 +236,6 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
         }
     }
 
-    @Override
     public void registerBean(String beanName, Object beanObj) {
         this.registerSingleton(beanName, beanObj);
     }
@@ -254,6 +253,12 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
     @Override
     public boolean isPrototype(String beanName) {
         return this.beanDefinitionMap.get(beanName).isPrototype();
+    }
+
+    // todo 这里取的是 BeanDefinition 的 class？需测试
+    @Override
+    public Class<?> getType(String beanName) {
+        return this.beanDefinitionMap.get(beanName).getClass();
     }
 
     @Override

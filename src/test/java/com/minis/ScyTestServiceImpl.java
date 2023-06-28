@@ -45,7 +45,7 @@ public class ScyTestServiceImpl implements ScyTestService {
 
     @Override
     public void sayHello() {
-        System.out.println("hello! " + this.name + "," + this.age);
+        System.out.println("ScyTestService sayHello! " + this.name + "," + this.age);
     }
 
     public String getProperty1() {

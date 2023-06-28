@@ -1,9 +1,11 @@
 package com.minis.context;
 
-import com.minis.beans.BeansException;
-import com.minis.beans.factory.BeanFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import com.minis.beans.factory.support.AbstractBeanFactory;
+import com.minis.beans.factory.config.BeanFactoryPostProcessor;
+import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
 import com.minis.core.ClassPathXmlResource;
@@ -14,10 +16,18 @@ import com.minis.core.Resource;
  *   1. 创建 BeanFactory
  *   1. 读XML文件，从中解析出Bean定义
  *   3. 实例化这些 bean，并将它们注入到 IoC 容器中
+ *
+ * 功能:
+ *   识别XML文件中的Bean定义，创建Bean，并放入IoC容器中管理
+ *   支持XML配置方式或者注解的方式进行Bean的依赖注入
+ *   构建 BeanFactory 体系
+ *   容器应用上下文
+ *   事件机制
  */
-public class ClassPathXmlApplicationContext implements BeanFactory {
+public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
-    AbstractBeanFactory beanFactory;
+    DefaultListableBeanFactory beanFactory;
+
 
     public ClassPathXmlApplicationContext(String fileName) {
         this(fileName, true);
@@ -32,33 +42,68 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
         this.beanFactory = defaultListableBeanFactory;
 
         if (isRefresh) {
-            this.beanFactory.refresh();
+            try {
+                refresh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
-    public Object getBean(String beanName) throws BeansException {
-        return this.beanFactory.getBean(beanName);
+    void onRefresh() {
+        this.beanFactory.refresh();
     }
 
     @Override
-    public void registerBean(String beanName, Object beanObj) {
-        this.beanFactory.registerBean(beanName, beanObj);
+    void finishRefresh() {
+        publishEvent(new ContextRefreshEvent("Context Refreshed..."));
+    }
+
+
+    @Override
+    public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
+        return this.beanFactory;
+    }
+
+
+    /**
+     * 事件机制
+     */
+    @Override
+    void registerListeners() {
+        ApplicationListener listener = new ApplicationListener();
+        this.getApplicationEventPublisher().addApplicationListener(listener);
     }
 
     @Override
-    public Boolean containsBean(String beanName) {
-        return this.beanFactory.containsBean(beanName);
+    void initApplicationEventPublisher() {
+        ApplicationEventPublisher aep = new SimpleApplicationEventPublisher();
+        this.setApplicationEventPublisher(aep);
     }
 
     @Override
-    public boolean isSingleton(String beanName) {
-        return false;
+    public void publishEvent(ApplicationEvent event) {
+        this.getApplicationEventPublisher().publishEvent(event);
     }
 
     @Override
-    public boolean isPrototype(String beanName) {
-        return false;
+    public void addApplicationListener(ApplicationListener listener) {
+        this.getApplicationEventPublisher().addApplicationListener(listener);
+    }
+
+
+    /**
+     * bean处理器
+     */
+    @Override
+    void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+
+    }
+
+    @Override
+    void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
+        this.beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
     }
 
 }
