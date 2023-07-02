@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <servlet>
+        <!-- 自定义的 servlet 的名称 -->
+        <servlet-name>minisMVC</servlet-name>
+
+        <!-- Servlet 对应的类，即继承了 HttpServlet 的类 -->
+        <servlet-class>com.minis.web.DispatcherServlet</servlet-class>
+
+        <!-- 初始化的配置，初始化时需要的配置都在 minisMVC-servlet.xml 文件中 -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/minisMVC-servlet.xml</param-value>
+        </init-param>
+
+        <!-- 容器启动时加载 servlet 的优先级，数字越小优先级越高，如果小于零就不加载 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>minisMVC</servlet-name>
+        <!-- 拦截的URL，"/" 表示拦截所有URL -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>
