@@ -2,5 +2,5 @@
 <beans>
     <!-- 配置 HelloWorldBean -->
     <!-- 当访问 /helloworld 时，执行 HelloWorldBean 的 doGet 方法 -->
-    <bean id="/helloworld" class="com.minis.web.HelloWorldBean" value="doGet"/>
+    <bean id="/helloworld" class="com.minis.test.HelloWorldBean" value="doGet"/>
 </beans>
