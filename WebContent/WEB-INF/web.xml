@@ -4,6 +4,17 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+    <context-param>
+        <!-- IoC 容器的配置文件 -->
+        <param-name>applicationContextConfigLocation</param-name>
+        <param-value>applicationContext.xml</param-value>
+    </context-param>
+
+    <!-- 定义监听器 -->
+    <listener>
+        <listener-class>com.minis.web.ContextLoaderListener</listener-class>
+    </listener>
+
     <servlet>
         <!-- 自定义的 servlet 的名称 -->
         <servlet-name>minisMVC</servlet-name>
@@ -13,6 +24,7 @@
 
         <!-- 初始化的配置，初始化时需要的配置都在 minisMVC-servlet.xml 文件中 -->
         <init-param>
+            <!-- servlet 配置文件 -->
             <param-name>contextConfigLocation</param-name>
             <param-value>/WEB-INF/minisMVC-servlet.xml</param-value>
         </init-param>

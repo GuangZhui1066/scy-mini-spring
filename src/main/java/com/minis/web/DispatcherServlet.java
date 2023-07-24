@@ -2,6 +2,7 @@ package com.minis.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -17,7 +18,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.minis.beans.BeansException;
+import com.minis.beans.factory.annotation.Autowired;
+
+/**
+ * Servlet 控制器
+ *
+ * 作用：
+ *   加载配置文件 (minisMVC-servlet.xml) 中的 servlet，并规定servlet拦截的所有 HTTP 请求
+ */
 public class DispatcherServlet extends HttpServlet {
+
+    private WebApplicationContext webApplicationContext;
+
+    private String contextConfigLocation;
 
     /**
      * 记录需要扫描的包名
@@ -59,8 +73,11 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        // 获取配置文件路径
-        String contextConfigLocation = config.getInitParameter("contextConfigLocation");
+        this.webApplicationContext = (WebApplicationContext) this.getServletContext().
+            getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+
+        // 获取配置 servlet 的配置文件路径 (minisMVC-servlet.xml)
+        this.contextConfigLocation = config.getInitParameter("contextConfigLocation");
         URL xmlPath = null;
         try {
             xmlPath = this.getServletContext().getResource(contextConfigLocation);
@@ -70,6 +87,7 @@ public class DispatcherServlet extends HttpServlet {
 
         this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
 
+        // 加载 bean
         refresh();
     }
 
@@ -93,10 +111,34 @@ public class DispatcherServlet extends HttpServlet {
             }
             try {
                 obj = clz.newInstance();
+
+                populateBean(obj, controllerName);
+
                 this.controllerObjs.put(controllerName, obj);
             } catch (Exception ignored) {
             }
         }
+    }
+
+    protected Object populateBean(Object bean, String beanName) throws BeansException {
+        Class<?> clazz = bean.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        if (fields != null){
+            for (Field field : fields) {
+                boolean isAutowired = field.isAnnotationPresent(Autowired.class);
+                if (isAutowired) {
+                    String fieldName = field.getName();
+                    Object autowiredObj = this.webApplicationContext.getBean(fieldName);
+                    try {
+                        field.setAccessible(true);
+                        field.set(bean, autowiredObj);
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return bean;
     }
 
     protected void initMapping() {
