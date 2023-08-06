@@ -81,6 +81,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
             if (singleton == null) {
                 // 获取 bean 的定义
                 BeanDefinition beanDefinition = this.beanDefinitionMap.get(beanName);
+                if (beanDefinition == null) {
+                    return null;
+                }
                 // 根据bean的定义创建bean的实例
                 singleton = createBean(beanDefinition);
                 // 把这个bean实例保存到bean的仓库中
