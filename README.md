@@ -78,3 +78,8 @@ Controller 类的实例化则是在 Servlet 初始化时 (com.minis.web.Dispatch
 现在我们把 Controller 的实例化也交给 MVC 容器 (适用于Web的IoC容器) 去管理，将 MVC 容器拆分为上下两级：
 1. XmlWebApplicationContext: 父级，启动在前。负责 IoC 容器的功能，用于创建原来 IoC 容器管理的 Service 类的实例
 2. AnnotationConfigWebApplicationContext: 子级，启动在后。负责创建 Controller 类的实例。并且子级持有对父级的引用，可以访问到父级
+
+### Dispatcher 设计模式
+通过 HandlerMapping，将请求映射到处理器 </br>
+通过 HandlerAdapter，支持多种类型的处理器进行处理 </br>
+通过 ViewResolver 解析逻辑视图名到具体视图实现 </br>
