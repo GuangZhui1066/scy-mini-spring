@@ -69,4 +69,6 @@ web.xml 通常包含 context-param、Listener、Filter、Servlet 等元素。</b
 4. 读取 < filter > 元素，创建过滤器实例
 5. 读取 < servlet > 元素，创建 Servlet 实例 (根据参数 load-on-startup 的大小为优先级)
 
-在创建 listener 的过程中，可以手动插入创建 IoC 容器的逻辑
+### MVC 整合 IoC
+在创建 listener 的过程中，可以手动插入创建 IoC 容器的逻辑 (在 javax.servlet.ServletContextListener.contextInitialized 方法中)</br>
+这样在 SpringMVC 中，就可以访问到 IoC 容器
