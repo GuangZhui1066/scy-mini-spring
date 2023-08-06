@@ -25,7 +25,6 @@
 启动 tomcat，访问 /helloworld
 ![img.png](images/img6.png)
 
-
 ### Servlet 服务器启动过程
 web.xml 文件是 Java 的 Servlet 规范中规定的，它里面声明了一个 Web 应用全部的配置信息。</br>
 每个 Java Web 应用都必须包含一个 web.xml 文件，且必须放在 WEB-INF 路径下。</br>
@@ -72,3 +71,10 @@ web.xml 通常包含 context-param、Listener、Filter、Servlet 等元素。</b
 ### MVC 整合 IoC
 在创建 listener 的过程中，可以手动插入创建 IoC 容器的逻辑 (在 javax.servlet.ServletContextListener.contextInitialized 方法中)</br>
 这样在 SpringMVC 中，就可以访问到 IoC 容器
+
+### 拆分两级上下文
+之前 IoC 容器是在 Listener 初始化时创建的，创建 IoC 容器时会实例化出 IoC 容器中管理的那些 Service 的 bean。</br>
+Controller 类的实例化则是在 Servlet 初始化时 (com.minis.web.DispatcherServlet.init) 进行的。</br>
+现在我们把 Controller 的实例化也交给 MVC 容器 (适用于Web的IoC容器) 去管理，将 MVC 容器拆分为上下两级：
+1. XmlWebApplicationContext: 父级，启动在前。负责 IoC 容器的功能，用于创建原来 IoC 容器管理的 Service 类的实例
+2. AnnotationConfigWebApplicationContext: 子级，启动在后。负责创建 Controller 类的实例。并且子级持有对父级的引用，可以访问到父级
