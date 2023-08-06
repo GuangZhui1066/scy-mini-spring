@@ -148,7 +148,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
 
             // 处理构造器参数
             ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
-            if (!constructorArgumentValues.isEmpty()) {
+            if (constructorArgumentValues != null && !constructorArgumentValues.isEmpty()) {
                 Class<?>[] paramTypes = new Class[constructorArgumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
 
@@ -191,7 +191,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
     private void handleProperties(BeanDefinition beanDefinition, Class<?> clazz, Object obj) {
         // 处理成员变量
         PropertyValues propertyValues = beanDefinition.getPropertyValues();
-        if (!propertyValues.isEmpty()) {
+        if (propertyValues != null && !propertyValues.isEmpty()) {
             for (int i = 0; i < propertyValues.size(); i++) {
                 // 对每一个属性，分数据类型分别处理
                 PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);

@@ -26,9 +26,17 @@ import com.minis.beans.factory.annotation.Autowired;
  *
  * 作用：
  *   加载配置文件 (minisMVC-servlet.xml) 中的 servlet，并规定servlet拦截的所有 HTTP 请求
+ *
+ * 注：
+ *   Service 类由 Listener 创建 (Listener初始化时会创建 IoC 容器，由IoC容器实例化Service类)
+ *   Controller 类由 DispatchServlet 创建
  */
 public class DispatcherServlet extends HttpServlet {
 
+    // 父级上下文，负责 (在Listener初始化时) 创建 Service 类的实例
+    private WebApplicationContext parentApplicationContext;
+
+    // 子级上下文，负责 (在Servlet初始化时) 创建 Controller 类的实例
     private WebApplicationContext webApplicationContext;
 
     private String contextConfigLocation;
@@ -73,10 +81,10 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        this.webApplicationContext = (WebApplicationContext) this.getServletContext().
+        this.parentApplicationContext = (WebApplicationContext) this.getServletContext().
             getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 
-        // 获取配置 servlet 的配置文件路径 (minisMVC-servlet.xml)
+        // 获取配置 servlet 的配置文件 (即定义 Controller 的 minisMVC-servlet.xml 文件) 路径
         this.contextConfigLocation = config.getInitParameter("contextConfigLocation");
         URL xmlPath = null;
         try {
@@ -86,6 +94,9 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
+
+        // 创建子级上下文，负责实例化 Controller
+        this.webApplicationContext = new AnnotationConfigWebApplicationContext(contextConfigLocation, parentApplicationContext);
 
         // 加载 bean
         refresh();
@@ -123,7 +134,7 @@ public class DispatcherServlet extends HttpServlet {
     protected Object populateBean(Object bean, String beanName) throws BeansException {
         Class<?> clazz = bean.getClass();
         Field[] fields = clazz.getDeclaredFields();
-        if (fields != null){
+        if (fields != null) {
             for (Field field : fields) {
                 boolean isAutowired = field.isAnnotationPresent(Autowired.class);
                 if (isAutowired) {

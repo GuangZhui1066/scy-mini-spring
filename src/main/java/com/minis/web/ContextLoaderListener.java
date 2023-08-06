@@ -39,12 +39,12 @@ public class ContextLoaderListener implements ServletContextListener {
     }
 
     private void initWebApplicationContext(ServletContext servletContext) {
-        // 获得上下文 ServletContext 中的配置文件路径
+        // 获得上下文 ServletContext 中的配置文件路径 (即定义Service的 xml 文件)
         String contextLocation = servletContext.getInitParameter(CONFIG_LOCATION_PARAM);
         System.out.println("contextLocation-----------" + contextLocation);
 
-        // 启动 IoC 容器
-        WebApplicationContext wac = new AnnotationConfigWebApplicationContext(contextLocation);
+        // 启动父级 IoC 容器，负责 Service 的创建
+        WebApplicationContext wac = new XmlWebApplicationContext(contextLocation);
         wac.setServletContext(servletContext);
         this.context = wac;
 
