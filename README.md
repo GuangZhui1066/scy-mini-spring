@@ -83,3 +83,7 @@ Controller 类的实例化则是在 Servlet 初始化时 (com.minis.web.Dispatch
 通过 HandlerMapping，将请求映射到处理器 </br>
 通过 HandlerAdapter，支持多种类型的处理器进行处理 </br>
 通过 ViewResolver 解析逻辑视图名到具体视图实现 </br>
+
+### 自动转换请求中的参数类型
+处理HTTP请求时，只能用 ServletRequest.getParameter() 方法获取参数，返回值是字符串。</br>
+因此希望 MVC 框架能自动解析HTTP请求中字符串格式的参数，把字符串转换成需要的类型，比如结构体。</br>
