@@ -14,4 +14,12 @@ public class HelloScyBean {
         return "hello scy!" + scyTestService.getProperty1();
     }
 
+    /**
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/scyParam?name=aa&age=25
+     */
+    @RequestMapping("/scyParam")
+    public String doGet3(ScyParam scyParam) {
+        return "hello! " + scyParam.getName() + ", " + scyParam.getAge();
+    }
+
 }
