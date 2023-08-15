@@ -2,6 +2,7 @@ package com.minis.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 类的成员变量列表
@@ -13,6 +14,15 @@ public class PropertyValues {
     public PropertyValues() {
         this.propertyValueList = new ArrayList<PropertyValue>(10);
     }
+
+    public PropertyValues(Map<String, Object> map) {
+        this.propertyValueList = new ArrayList<>(10);
+        for (Map.Entry<String,Object> e : map.entrySet()) {
+            PropertyValue pv = new PropertyValue(e.getKey(), e.getValue());
+            this.propertyValueList.add(pv);
+        }
+    }
+
 
     public List<PropertyValue> getPropertyValueList() {
         return this.propertyValueList;
@@ -35,7 +45,7 @@ public class PropertyValues {
     }
 
     public PropertyValue[] getPropertyValues() {
-        return (PropertyValue[]) this.propertyValueList.toArray();
+        return this.propertyValueList.toArray(new PropertyValue[0]);
     }
 
     public PropertyValue getPropertyValue(String propertyName) {
