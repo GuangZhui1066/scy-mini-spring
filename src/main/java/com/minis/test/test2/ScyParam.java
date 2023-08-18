@@ -1,10 +1,15 @@
 package com.minis.test.test2;
 
+import java.util.Date;
+
 public class ScyParam {
 
     private String name;
 
     private Integer age;
+
+    private Date birthday;
+
 
     public String getName() {
         return name;
@@ -20,6 +25,14 @@ public class ScyParam {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
 }
