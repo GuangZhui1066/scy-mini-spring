@@ -6,7 +6,9 @@ import java.lang.reflect.Parameter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.minis.beans.BeansException;
 import com.minis.web.WebApplicationContext;
+import com.minis.web.WebBindingInitializer;
 import com.minis.web.WebDataBinder;
 import com.minis.web.WebDataBinderFactory;
 
@@ -20,9 +22,17 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     private WebApplicationContext wac;
 
+    private WebBindingInitializer webBindingInitializer = null;
+
     public RequestMappingHandlerAdapter(WebApplicationContext wac) {
         this.wac = wac;
+        try {
+            this.webBindingInitializer = (WebBindingInitializer)this.wac.getBean("webBindingInitializer");
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -55,6 +65,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
             // todo: 如果参数类型是 Double, int 等，因为其没有无参构造方法，所以不能用 newInstance() 方法创建实例，会抛 InstantiationException 实例化异常
             Object methodParamObj = methodParameter.getType().newInstance();
             WebDataBinder wdb = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
+            webBindingInitializer.initBinder(wdb);
             wdb.bind(request);
             methodParamObjs[i] = methodParamObj;
             i++;
@@ -65,6 +76,14 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         Object returnObj = invocableMethod.invoke(handlerMethod.getBean(), methodParamObjs);
 
         response.getWriter().append(returnObj.toString());
+    }
+
+    public WebBindingInitializer getWebBindingInitializer() {
+        return webBindingInitializer;
+    }
+
+    public void setWebBindingInitializer(WebBindingInitializer webBindingInitializer) {
+        this.webBindingInitializer = webBindingInitializer;
     }
 
 }

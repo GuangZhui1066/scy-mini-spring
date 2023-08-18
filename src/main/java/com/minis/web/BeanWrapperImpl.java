@@ -62,8 +62,14 @@ public class BeanWrapperImpl extends PropertyEditorRegistrySupport {
     public void setPropertyValue(PropertyValue pv) {
         // 拿到该属性的处理器
         BeanPropertyHandler propertyHandler = new BeanPropertyHandler(pv.getName());
-        // 找到拿到该属性类型的转换器
-        PropertyEditor pe = this.getDefaultEditor(propertyHandler.getPropertyClz());
+
+        // 拿到该属性类型的转换器
+        // 先尝试获取自定义转换器，没有对应类型的自定义转换器再去获取默认转换器
+        PropertyEditor pe = this.getCustomEditor(propertyHandler.getPropertyClz());
+        if (pe == null) {
+            pe = this.getDefaultEditor(propertyHandler.getPropertyClz());
+        }
+
         // 设置该属性的值
         pe.setAsText((String) pv.getValue());
         propertyHandler.setValue(pe.getValue());
@@ -89,10 +95,10 @@ public class BeanWrapperImpl extends PropertyEditorRegistrySupport {
                 // 获取参数对应的属性及类型
                 Field field = clz.getDeclaredField(propertyName);
                 propertyClz = field.getType();
-                // 获取该属性的 set 方法 (默认方法名为 set + 字段名)
+                // 获取该属性的 set 方法 (默认方法名为 set + 字段名，有一个参数)
                 this.writeMethod = clz.getDeclaredMethod("set" +
                     propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), propertyClz);
-                // 获取该属性的 get 方法
+                // 获取该属性的 get 方法 (默认方法名为 get + 字段名，没有参数)
                 this.readMethod = clz.getDeclaredMethod("get" +
                     propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1));
             } catch (Exception e) {

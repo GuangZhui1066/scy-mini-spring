@@ -13,6 +13,9 @@ public class PropertyEditorRegistrySupport {
      */
     private Map<Class<?>, PropertyEditor> defaultEditors;
 
+    /**
+     * 用户自定义的转换器
+     */
     private Map<Class<?>, PropertyEditor> customEditors;
 
 
@@ -61,7 +64,7 @@ public class PropertyEditorRegistrySupport {
     /**
      * 获取自定义转换器
      */
-    private PropertyEditor getCustomEditor(Class<?> requiredType) {
+    public PropertyEditor getCustomEditor(Class<?> requiredType) {
         if (requiredType == null || this.customEditors == null) {
             return null;
         }

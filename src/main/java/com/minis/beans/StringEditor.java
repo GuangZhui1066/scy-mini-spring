@@ -1,5 +1,8 @@
 package com.minis.beans;
 
+/**
+ * 字符串转换器
+ */
 public class StringEditor implements PropertyEditor {
 
     private Class<String> strClass;

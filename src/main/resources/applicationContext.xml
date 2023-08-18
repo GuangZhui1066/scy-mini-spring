@@ -23,4 +23,8 @@
         <!-- scyTestService 属性使用@Autowire注解注入，不通过xml配置注入  -->
         <!-- <property name="scyTestService" type="com.minis.iocTestClass.ScyTestServiceImpl" ref="scyTestService"/> -->
     </bean>
+
+    <!-- webBindingInitializer -->
+    <bean name="webBindingInitializer" class="com.minis.test.DateInitializer"/>
+
 </beans>

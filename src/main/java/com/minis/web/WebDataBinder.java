@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.minis.beans.PropertyEditor;
 import com.minis.beans.PropertyValues;
 import com.minis.util.WebUtils;
 
@@ -71,6 +72,10 @@ public class WebDataBinder {
 
     protected BeanWrapperImpl getPropertyAccessor() {
         return this.beanWrapper;
+    }
+
+    public void registerCustomEditor(Class<?> requiredType, PropertyEditor propertyEditor) {
+        getPropertyAccessor().registerCustomEditor(requiredType, propertyEditor);
     }
 
 }
