@@ -31,11 +31,17 @@ public class WebDataBinder {
      */
     private Class<?> clz;
 
+    /**
+     * 包装对象
+     */
+    private BeanWrapperImpl beanWrapper;
+
 
     public WebDataBinder(Object target, String targetName) {
         this.target = target;
         this.objectName = targetName;
         this.clz = this.target.getClass();
+        this.beanWrapper = new BeanWrapperImpl(this.target);
     }
 
     public void bind(HttpServletRequest request) {
@@ -48,7 +54,7 @@ public class WebDataBinder {
     }
 
     private PropertyValues assignParameters(HttpServletRequest request) {
-        Map<String,Object> map = WebUtils.getParametersStartingWith(request, "");
+        Map<String, Object> map = WebUtils.getParametersStartingWith(request, "");
         return new PropertyValues(map);
     }
 
@@ -64,7 +70,7 @@ public class WebDataBinder {
     }
 
     protected BeanWrapperImpl getPropertyAccessor() {
-        return new BeanWrapperImpl(this.target);
+        return this.beanWrapper;
     }
 
 }
