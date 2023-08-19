@@ -7,12 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.minis.beans.BeansException;
+import com.minis.context.ApplicationContext;
+import com.minis.context.ApplicationContextAware;
 import com.minis.http.converter.HttpMessageConverter;
 import com.minis.web.bind.WebDataBinder;
 import com.minis.web.bind.annotation.ResponseBody;
 import com.minis.web.bind.support.WebBindingInitializer;
 import com.minis.web.bind.support.WebDataBinderFactory;
-import com.minis.web.context.WebApplicationContext;
 import com.minis.web.method.HandlerMethod;
 import com.minis.web.servlet.HandlerAdapter;
 
@@ -22,22 +23,15 @@ import com.minis.web.servlet.HandlerAdapter;
  * 作用：
  *   根据请求的 URL 调用对应的处理类、处理方法
  */
-public class RequestMappingHandlerAdapter implements HandlerAdapter {
+public class RequestMappingHandlerAdapter implements HandlerAdapter, ApplicationContextAware {
 
-    private WebApplicationContext wac;
+    private ApplicationContext applicationContext;
 
     private WebBindingInitializer webBindingInitializer = null;
 
     private HttpMessageConverter messageConverter = null;
 
-    public RequestMappingHandlerAdapter(WebApplicationContext wac) {
-        this.wac = wac;
-        try {
-            this.webBindingInitializer = (WebBindingInitializer) this.wac.getBean("webBindingInitializer");
-            this.messageConverter = (HttpMessageConverter) this.wac.getBean("messageConverter");
-        } catch (BeansException e) {
-            e.printStackTrace();
-        }
+    public RequestMappingHandlerAdapter() {
     }
 
 
@@ -93,6 +87,19 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     public void setWebBindingInitializer(WebBindingInitializer webBindingInitializer) {
         this.webBindingInitializer = webBindingInitializer;
+    }
+
+    public HttpMessageConverter getMessageConverter() {
+        return messageConverter;
+    }
+
+    public void setMessageConverter(HttpMessageConverter messageConverter) {
+        this.messageConverter = messageConverter;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 }

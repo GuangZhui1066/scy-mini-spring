@@ -36,6 +36,9 @@ import com.minis.web.servlet.HandlerMapping;
  */
 public class DispatcherServlet extends HttpServlet {
 
+    public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
+    public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
+
     // 父级上下文，负责 (在Listener初始化时) 创建 Service 类的实例
     private WebApplicationContext parentApplicationContext;
 
@@ -121,11 +124,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void initHandlerMappings(WebApplicationContext wac) {
-        this.handlerMapping = new RequestMappingHandlerMapping(wac);
-
+        try {
+            this.handlerMapping = (HandlerMapping) wac.getBean(HANDLER_MAPPING_BEAN_NAME);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
     protected void initHandlerAdapters(WebApplicationContext wac) {
-        this.handlerAdapter = new RequestMappingHandlerAdapter(wac);
+        try {
+            this.handlerAdapter = (HandlerAdapter) wac.getBean(HANDLER_ADAPTER_BEAN_NAME);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void initViewResolvers(WebApplicationContext wac) {

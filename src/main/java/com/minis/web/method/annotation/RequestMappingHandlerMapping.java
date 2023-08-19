@@ -5,8 +5,9 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 
 import com.minis.beans.BeansException;
+import com.minis.context.ApplicationContext;
+import com.minis.context.ApplicationContextAware;
 import com.minis.web.bind.annotation.RequestMapping;
-import com.minis.web.context.WebApplicationContext;
 import com.minis.web.method.HandlerMethod;
 import com.minis.web.servlet.HandlerMapping;
 
@@ -16,21 +17,19 @@ import com.minis.web.servlet.HandlerMapping;
  * 作用：
  *   根据请求的 URL 找到对应的处理类、处理方法
  */
-public class RequestMappingHandlerMapping implements HandlerMapping {
+public class RequestMappingHandlerMapping implements HandlerMapping, ApplicationContextAware {
 
-    private WebApplicationContext wac;
+    private ApplicationContext applicationContext;
 
     private final MappingRegistry mappingRegistry = new MappingRegistry();
 
-    public RequestMappingHandlerMapping(WebApplicationContext wac) {
-        this.wac = wac;
-        initMapping();
+    public RequestMappingHandlerMapping() {
     }
 
     protected void initMapping() {
         Class<?> clz = null;
         Object obj = null;
-        String[] controllerNames = this.wac.getBeanDefinitionNames();
+        String[] controllerNames = this.applicationContext.getBeanDefinitionNames();
         for (String controllerName : controllerNames) {
             try {
                 clz = Class.forName(controllerName);
@@ -38,7 +37,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
                 e1.printStackTrace();
             }
             try {
-                obj = this.wac.getBean(controllerName);
+                obj = this.applicationContext.getBean(controllerName);
             } catch (BeansException e) {
                 e.printStackTrace();
             }
@@ -61,6 +60,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerMethod getHandler(HttpServletRequest request) {
+        initMapping();
+
         String sPath = request.getServletPath();
         if (!this.mappingRegistry.getUrlMappingNames().contains(sPath)) {
             return null;
@@ -70,6 +71,11 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         Object obj = this.mappingRegistry.getMappingObjs().get(sPath);
         HandlerMethod handlerMethod = new HandlerMethod(method, obj);
         return handlerMethod;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 }

@@ -24,6 +24,16 @@
         <!-- <property name="scyTestService" type="com.minis.iocTestClass.ScyTestServiceImpl" ref="scyTestService"/> -->
     </bean>
 
+
+    <!-- RequestMappingHandlerMapping -->
+    <bean name="handlerMapping" class="com.minis.web.method.annotation.RequestMappingHandlerMapping"/>
+
+    <!-- RequestMappingHandlerAdapter -->
+    <bean name="handlerAdapter" class="com.minis.web.method.annotation.RequestMappingHandlerAdapter">
+        <property name="webBindingInitializer" type="com.minis.web.bind.support.WebBindingInitializer" ref="webBindingInitializer"/>
+        <property name="messageConverter" type="com.minis.http.converter.HttpMessageConverter" ref="messageConverter"/>
+    </bean>
+
     <!-- webBindingInitializer -->
     <bean name="webBindingInitializer" class="com.minis.test.DateInitializer"/>
 
