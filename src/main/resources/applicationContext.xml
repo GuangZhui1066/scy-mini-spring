@@ -27,4 +27,15 @@
     <!-- webBindingInitializer -->
     <bean name="webBindingInitializer" class="com.minis.test.DateInitializer"/>
 
+    <!-- messageConverter -->
+    <bean name="messageConverter" class="com.minis.http.converter.DefaultHttpMessageConverter">
+        <property name="objectMapper" type="com.minis.util.ObjectMapper" ref="objectMapper"/>
+    </bean>
+
+    <!-- objectMapper -->
+    <bean name="objectMapper" class="com.minis.util.DefaultObjectMapper" >
+        <property type="String" name="dateFormat" value="yyyy/MM/dd"/>
+        <property type="String" name="decimalFormat" value="###.##"/>
+    </bean>
+
 </beans>

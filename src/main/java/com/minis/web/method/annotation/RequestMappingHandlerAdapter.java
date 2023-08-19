@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.minis.beans.BeansException;
+import com.minis.http.converter.HttpMessageConverter;
 import com.minis.web.bind.WebDataBinder;
+import com.minis.web.bind.annotation.ResponseBody;
 import com.minis.web.bind.support.WebBindingInitializer;
 import com.minis.web.bind.support.WebDataBinderFactory;
 import com.minis.web.context.WebApplicationContext;
@@ -26,10 +28,13 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
 
     private WebBindingInitializer webBindingInitializer = null;
 
+    private HttpMessageConverter messageConverter = null;
+
     public RequestMappingHandlerAdapter(WebApplicationContext wac) {
         this.wac = wac;
         try {
-            this.webBindingInitializer = (WebBindingInitializer)this.wac.getBean("webBindingInitializer");
+            this.webBindingInitializer = (WebBindingInitializer) this.wac.getBean("webBindingInitializer");
+            this.messageConverter = (HttpMessageConverter) this.wac.getBean("messageConverter");
         } catch (BeansException e) {
             e.printStackTrace();
         }
@@ -76,8 +81,10 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         // 传入参数，调用处理方法
         Method invocableMethod = handlerMethod.getMethod();
         Object returnObj = invocableMethod.invoke(handlerMethod.getBean(), methodParamObjs);
+        if (invocableMethod.isAnnotationPresent(ResponseBody.class)) {
+            this.messageConverter.write(returnObj, response);
+        }
 
-        response.getWriter().append(returnObj.toString());
     }
 
     public WebBindingInitializer getWebBindingInitializer() {
