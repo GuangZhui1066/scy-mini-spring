@@ -1,4 +1,4 @@
-package com.minis.web.servlet;
+package com.minis.web.method.annotation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -7,10 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.minis.beans.BeansException;
-import com.minis.web.WebApplicationContext;
-import com.minis.web.WebBindingInitializer;
-import com.minis.web.WebDataBinder;
-import com.minis.web.WebDataBinderFactory;
+import com.minis.web.bind.WebDataBinder;
+import com.minis.web.bind.support.WebBindingInitializer;
+import com.minis.web.bind.support.WebDataBinderFactory;
+import com.minis.web.context.WebApplicationContext;
+import com.minis.web.method.HandlerMethod;
+import com.minis.web.servlet.HandlerAdapter;
 
 /**
  * HandlerAdapter 的实现类

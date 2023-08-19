@@ -1,4 +1,4 @@
-package com.minis.web;
+package com.minis.web.context.support;
 
 import java.net.URL;
 import java.util.ArrayList;

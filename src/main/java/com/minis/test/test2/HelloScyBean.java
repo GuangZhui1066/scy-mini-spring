@@ -2,7 +2,7 @@ package com.minis.test.test2;
 
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.iocTestClass.ScyTestServiceImpl;
-import com.minis.web.RequestMapping;
+import com.minis.web.bind.annotation.RequestMapping;
 
 public class HelloScyBean {
 

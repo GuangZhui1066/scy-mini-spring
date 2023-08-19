@@ -1,8 +1,9 @@
-package com.minis.web;
+package com.minis.web.context.support;
 
 import javax.servlet.ServletContext;
 
 import com.minis.context.ClassPathXmlApplicationContext;
+import com.minis.web.context.WebApplicationContext;
 
 /**
  * 父级上下文，负责实例化 IoC 容器中的 Service

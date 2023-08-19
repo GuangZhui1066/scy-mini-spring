@@ -1,6 +1,8 @@
-package com.minis.web;
+package com.minis.web.bind.support;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.minis.web.bind.WebDataBinder;
 
 /**
  * WebDataBinder 的工厂类，用于操作 WebDataBinder

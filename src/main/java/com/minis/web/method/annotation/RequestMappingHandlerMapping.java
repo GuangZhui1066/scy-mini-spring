@@ -1,12 +1,14 @@
-package com.minis.web.servlet;
+package com.minis.web.method.annotation;
 
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.minis.beans.BeansException;
-import com.minis.web.RequestMapping;
-import com.minis.web.WebApplicationContext;
+import com.minis.web.bind.annotation.RequestMapping;
+import com.minis.web.context.WebApplicationContext;
+import com.minis.web.method.HandlerMethod;
+import com.minis.web.servlet.HandlerMapping;
 
 /**
  * HandlerMapping 的实现类

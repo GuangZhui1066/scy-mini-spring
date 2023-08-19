@@ -12,7 +12,7 @@
 
     <!-- 定义监听器 -->
     <listener>
-        <listener-class>com.minis.web.ContextLoaderListener</listener-class>
+        <listener-class>com.minis.web.context.ContextLoaderListener</listener-class>
     </listener>
 
     <servlet>

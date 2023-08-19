@@ -1,4 +1,4 @@
-package com.minis.web;
+package com.minis.web.context.support;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -19,6 +19,7 @@ import com.minis.context.ApplicationEventPublisher;
 import com.minis.context.ApplicationListener;
 import com.minis.context.ContextRefreshEvent;
 import com.minis.context.SimpleApplicationEventPublisher;
+import com.minis.web.context.WebApplicationContext;
 
 /**
  * IoC 容器 (AbstractApplicationContext)，同时增加了 ServletContext 属性，成为适用于 Web 场景的上下文 —— MVC 容器

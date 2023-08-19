@@ -1,8 +1,10 @@
-package com.minis.web;
+package com.minis.web.context;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import com.minis.web.context.support.XmlWebApplicationContext;
 
 /**
  * 定义监听器 Listener

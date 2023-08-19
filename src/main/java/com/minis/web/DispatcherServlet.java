@@ -15,11 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.minis.beans.BeansException;
+import com.minis.web.context.WebApplicationContext;
+import com.minis.web.context.support.AnnotationConfigWebApplicationContext;
+import com.minis.web.context.support.XmlScanComponentHelper;
+import com.minis.web.method.HandlerMethod;
+import com.minis.web.method.annotation.RequestMappingHandlerAdapter;
+import com.minis.web.method.annotation.RequestMappingHandlerMapping;
 import com.minis.web.servlet.HandlerAdapter;
 import com.minis.web.servlet.HandlerMapping;
-import com.minis.web.servlet.HandlerMethod;
-import com.minis.web.servlet.RequestMappingHandlerAdapter;
-import com.minis.web.servlet.RequestMappingHandlerMapping;
 
 /**
  * Servlet 控制器

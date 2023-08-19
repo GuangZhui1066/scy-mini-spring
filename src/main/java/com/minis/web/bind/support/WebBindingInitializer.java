@@ -1,4 +1,6 @@
-package com.minis.web;
+package com.minis.web.bind.support;
+
+import com.minis.web.bind.WebDataBinder;
 
 /**
  * 初始化 WebDataBinder

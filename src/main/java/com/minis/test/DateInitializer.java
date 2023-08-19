@@ -2,8 +2,8 @@ package com.minis.test;
 
 import java.util.Date;
 
-import com.minis.web.WebBindingInitializer;
-import com.minis.web.WebDataBinder;
+import com.minis.web.bind.support.WebBindingInitializer;
+import com.minis.web.bind.WebDataBinder;
 
 /**
  * 初始化 WebDataBinder: 为 WebDataBinder 注册自定义的 Date 类型转换器
