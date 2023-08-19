@@ -1,5 +1,4 @@
 # IoC
-
 ### IoC 容器继承关系
 ![img_1.png](IoC容器继承关系.png)
 
@@ -7,10 +6,11 @@
 ![img_2.png](IoC容器实现过程.png)
 
 
-# MVC
 
+# MVC
 ### MVC 处理流程
 ![img_3.png](MVC处理流程.png)
+
 
 ### 配置 Tomcat
 为 module 添加 web，配置web资源目录 (web资源目录下需要有 web.xml 文件，配置后web资源目录会有小蓝点)
@@ -24,6 +24,7 @@
 ![img.png](images/img5.png)
 启动 tomcat，访问 /helloworld
 ![img.png](images/img6.png)
+
 
 ### Servlet 服务器启动过程
 web.xml 文件是 Java 的 Servlet 规范中规定的，它里面声明了一个 Web 应用全部的配置信息。</br>
@@ -68,9 +69,11 @@ web.xml 通常包含 context-param、Listener、Filter、Servlet 等元素。</b
 4. 读取 < filter > 元素，创建过滤器实例
 5. 读取 < servlet > 元素，创建 Servlet 实例 (根据参数 load-on-startup 的大小为优先级)
 
+
 ### MVC 整合 IoC
 在创建 listener 的过程中，可以手动插入创建 IoC 容器的逻辑 (在 javax.servlet.ServletContextListener.contextInitialized 方法中)</br>
 这样在 SpringMVC 中，就可以访问到 IoC 容器
+
 
 ### 拆分两级上下文
 之前 IoC 容器是在 Listener 初始化时创建的，创建 IoC 容器时会实例化出 IoC 容器中管理的那些 Service 的 bean。</br>
@@ -79,11 +82,21 @@ Controller 类的实例化则是在 Servlet 初始化时 (com.minis.web.Dispatch
 1. XmlWebApplicationContext: 父级，启动在前。负责 IoC 容器的功能，用于创建原来 IoC 容器管理的 Service 类的实例
 2. AnnotationConfigWebApplicationContext: 子级，启动在后。负责创建 Controller 类的实例。并且子级持有对父级的引用，可以访问到父级
 
+
 ### Dispatcher 设计模式
 通过 HandlerMapping，将请求映射到处理器 </br>
 通过 HandlerAdapter，支持多种类型的处理器进行处理 </br>
 通过 ViewResolver 解析逻辑视图名到具体视图实现 </br>
 
+
 ### 自动转换请求中的参数类型
 处理HTTP请求时，只能用 ServletRequest.getParameter() 方法获取参数，返回值是字符串。</br>
 因此希望 MVC 框架能自动解析HTTP请求中字符串格式的参数，把字符串转换成需要的类型，比如结构体。</br>
+
+
+### 将web请求的处理结果返回给前端
+调用目标方法得到返回值之后，有两种方式可以把处理结果返回给前端
+1. 只返回数据。主流方式，这种方式可以实现前后端分离，后端只是把数据返回给前端，由前端自行渲染界面效果。
+2. 返回一个页面。由后端 controller 根据某种规则拿到一个页面，把数据整合进去，然后整个回传给前端浏览器。典型的技术就是 JSP。
+
+处理返回数据与处理参数相反，需要把后端的返回值 (Java对象) 按照某种字符串格式传给前端。
