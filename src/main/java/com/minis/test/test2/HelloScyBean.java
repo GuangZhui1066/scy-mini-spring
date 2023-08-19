@@ -3,6 +3,7 @@ package com.minis.test.test2;
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.iocTestClass.ScyTestServiceImpl;
 import com.minis.web.bind.annotation.RequestMapping;
+import com.minis.web.bind.annotation.ResponseBody;
 
 public class HelloScyBean {
 
@@ -30,6 +31,20 @@ public class HelloScyBean {
     @RequestMapping("/scyDateParam")
     public String doGet4(ScyParam scyParam) {
         return "hello! " + scyParam.getName() + ", " + scyParam.getAge() + ", " + scyParam.getBirthday();
+    }
+
+    /**
+     * 测试
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/scyReturnObj?name=aa&age=25&birthday=1999-12-17
+     */
+    @RequestMapping("/scyReturnObj")
+    @ResponseBody
+    public ScyReturnObj doGet5(ScyParam scyParam) {
+        ScyReturnObj returnObj = new ScyReturnObj();
+        returnObj.setName(scyParam.getName());
+        returnObj.setPrice(10.66 * scyParam.getAge());
+        returnObj.setTime(scyParam.getBirthday());
+        return returnObj;
     }
 
 }
