@@ -25,14 +25,22 @@
     </bean>
 
 
-    <!-- RequestMappingHandlerMapping -->
+    <!-- HandlerMapping -->
     <bean name="handlerMapping" class="com.minis.web.method.annotation.RequestMappingHandlerMapping"/>
 
-    <!-- RequestMappingHandlerAdapter -->
+    <!-- HandlerAdapter -->
     <bean name="handlerAdapter" class="com.minis.web.method.annotation.RequestMappingHandlerAdapter">
         <property name="webBindingInitializer" type="com.minis.web.bind.support.WebBindingInitializer" ref="webBindingInitializer"/>
         <property name="messageConverter" type="com.minis.http.converter.HttpMessageConverter" ref="messageConverter"/>
     </bean>
+
+    <!-- ViewResolver -->
+    <bean name="viewResolver" class="com.minis.web.servlet.view.InternalResourceViewResolver" >
+        <property type="String" name="viewClassName" value="com.minis.web.servlet.view.JstlView" />
+        <property type="String" name="prefix" value="/jsp/" />
+        <property type="String" name="suffix" value=".jsp" />
+    </bean>
+
 
     <!-- webBindingInitializer -->
     <bean name="webBindingInitializer" class="com.minis.test.DateInitializer"/>

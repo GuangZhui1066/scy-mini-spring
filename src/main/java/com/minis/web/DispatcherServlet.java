@@ -22,6 +22,8 @@ import com.minis.web.method.HandlerMethod;
 import com.minis.web.servlet.HandlerAdapter;
 import com.minis.web.servlet.HandlerMapping;
 import com.minis.web.servlet.ModelAndView;
+import com.minis.web.servlet.View;
+import com.minis.web.servlet.ViewResolver;
 
 /**
  * Servlet 控制器
@@ -37,6 +39,7 @@ public class DispatcherServlet extends HttpServlet {
 
     public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
     public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
+    public static final String VIEW_RESOLVER_BEAN_NAME = "viewResolver";
 
     // 父级上下文，负责 (在Listener初始化时) 创建 Service 类的实例
     private WebApplicationContext parentApplicationContext;
@@ -48,6 +51,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMapping handlerMapping;
     private HandlerAdapter handlerAdapter;
+    private ViewResolver viewResolver;
 
     public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = DispatcherServlet.class.getName() + ".CONTEXT";
 
@@ -138,6 +142,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void initViewResolvers(WebApplicationContext wac) {
+        try {
+            this.viewResolver = (ViewResolver) wac.getBean(VIEW_RESOLVER_BEAN_NAME);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -161,22 +170,40 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdapter handlerAdapter = this.handlerAdapter;
         ModelAndView mav = handlerAdapter.handle(request, response, handlerMethod);
 
+        // 渲染展示页面
         render(request, response, mav);
     }
 
     /**
-     * 用 JSP 进行render
+     * 渲染返回给前端展示的页面 (视图中填充数据)，写到 HttpServletResponse 中
      */
     protected void render( HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws Exception {
-        // 获取 model，写到 request 的 Attribute 中
-        Map<String, Object> modelMap = mav.getModel();
-        for (Map.Entry<String, Object> e : modelMap.entrySet()) {
-            request.setAttribute(e.getKey(), e.getValue());
+        // 直接返回 response 中的字符串，不需要渲染页面
+        if (mav == null) {
+            response.getWriter().flush();
+            response.getWriter().close();
+            return;
         }
-        // 输出到目标 JSP 页面
+
+        // 获取视图名
         String sTarget = mav.getViewName();
-        String sPath = "/jsp/" + sTarget + ".jsp";
-        request.getRequestDispatcher(sPath).forward(request, response);
+        // 获取返回数据
+        Map<String, Object> modelMap = mav.getModel();
+        // 根据视图名找到对应的视图实现
+        View view = resolveViewName(sTarget, modelMap, request);
+
+        // 将返回数据渲染到视图中，并把视图写到 HttpServletResponse 中供前端展示
+        view.render(modelMap, request, response);
+    }
+
+    protected View resolveViewName(String viewName, Map<String, Object> model, HttpServletRequest request) throws Exception {
+        if (this.viewResolver != null) {
+            View view = viewResolver.resolveViewName(viewName);
+            if (view != null) {
+                return view;
+            }
+        }
+        return null;
     }
 
 }

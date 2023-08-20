@@ -82,15 +82,17 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, Application
         Object returnObj = invocableMethod.invoke(handlerMethod.getBean(), methodParamObjs);
 
         ModelAndView mav = null;
-        // 如果返回带有 @ResponseBody 注解，直接把返回对象格式化为 (JSON) 字符串写到 response
+        // 前后端交互方式一：后端只返回数据。如果返回带有 @ResponseBody 注解，直接把返回对象格式化为 (JSON) 字符串写到 response
         if (invocableMethod.isAnnotationPresent(ResponseBody.class)) {
             this.messageConverter.write(returnObj, response);
         }
-        // 返回的是前端页面，把返回结果包装成 ModelAndView 对象返回
+        // 前后端交互方式二：后端返回的是整个前端页面。处理方法返回的是数据和视图 (ModelAndView) ，最终在 DispatcherServlet 中将其渲染成页面 (.jsp)
         else {
             if (returnObj instanceof ModelAndView) {
                 mav = (ModelAndView) returnObj;
             }
+            // 字符串页认为是一个页面 (视图名)，对应测试方法：com.minis.test.test2.HelloScyBean.doGet7
+            // 但此逻辑会影响 com.minis.test.test2.HelloScyBean.doGet / doGet3 等原本返回字符串的测试方法
             else if(returnObj instanceof String) {
                 String sTarget = (String) returnObj;
                 mav = new ModelAndView();
