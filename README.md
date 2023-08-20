@@ -100,3 +100,46 @@ Controller 类的实例化则是在 Servlet 初始化时 (com.minis.web.Dispatch
 2. 返回一个页面。由后端 controller 根据某种规则拿到一个页面，把数据整合进去，然后整个回传给前端浏览器。典型的技术就是 JSP。
 
 处理返回数据与处理参数相反，需要把后端的返回值 (Java对象) 按照某种字符串格式传给前端。
+
+
+
+# JDBC
+在 Java 体系中，数据访问的规范是 JDBC，也就是 Java Database Connectivity. </br>
+JDBC 流程：
+
+    1. 加载数据库驱动程序。
+       JDBC 只是提供了一个访问的 API，具体访问数据库的实现是由不同厂商提供的数据库 Driver 实现的 (桥接模式)。对同一种数据库，可以有不同的 Driver。
+    2. 获取数据库连接 (Connection 对象)
+       建立和断开数据库连接的过程很耗时，所以需要利用数据库连接池技术来提高性能。
+    3. 通过 Connection 对象创建 Statement 对象，Statement 对象是对一条 SQL 命令的包装
+    4. 使用 Statement 执行 SQL 语句，获取返回的结果集 ResultSet
+    5. 操作 ResultSet 结果集，转化为业务对象，执行后续的业务逻辑
+    6. 回收数据库资源，关闭数据库连接，释放资源
+
+代码：
+
+    Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+    con = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databasename=DEMO;user=testuser;password=test;");
+    stmt = con.createStatement(sql); 
+    rs = stmt.executeQuery();
+    User user = null;
+    if (rs.next()) {
+        user = new User();
+        user.setId(rs.getInt("id"));
+        user.setName(rs.getString("name"));
+    }
+    rs.close();
+    stmt.close();
+    con.cloase();
+
+
+### 连接 MySQL
+homebrew 安装 MySQL
+启动 mysql
+
+    mysql.server start
+
+navicat 连接 mysql，创建数据库、表
+
+
+
