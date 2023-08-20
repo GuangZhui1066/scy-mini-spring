@@ -19,10 +19,9 @@ import com.minis.web.context.WebApplicationContext;
 import com.minis.web.context.support.AnnotationConfigWebApplicationContext;
 import com.minis.web.context.support.XmlScanComponentHelper;
 import com.minis.web.method.HandlerMethod;
-import com.minis.web.method.annotation.RequestMappingHandlerAdapter;
-import com.minis.web.method.annotation.RequestMappingHandlerMapping;
 import com.minis.web.servlet.HandlerAdapter;
 import com.minis.web.servlet.HandlerMapping;
+import com.minis.web.servlet.ModelAndView;
 
 /**
  * Servlet 控制器
@@ -160,7 +159,24 @@ public class DispatcherServlet extends HttpServlet {
         }
 
         HandlerAdapter handlerAdapter = this.handlerAdapter;
-        handlerAdapter.handle(request, response, handlerMethod);
+        ModelAndView mav = handlerAdapter.handle(request, response, handlerMethod);
+
+        render(request, response, mav);
+    }
+
+    /**
+     * 用 JSP 进行render
+     */
+    protected void render( HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws Exception {
+        // 获取 model，写到 request 的 Attribute 中
+        Map<String, Object> modelMap = mav.getModel();
+        for (Map.Entry<String, Object> e : modelMap.entrySet()) {
+            request.setAttribute(e.getKey(), e.getValue());
+        }
+        // 输出到目标 JSP 页面
+        String sTarget = mav.getViewName();
+        String sPath = "/jsp/" + sTarget + ".jsp";
+        request.getRequestDispatcher(sPath).forward(request, response);
     }
 
 }

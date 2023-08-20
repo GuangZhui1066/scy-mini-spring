@@ -16,6 +16,7 @@ import com.minis.web.bind.support.WebBindingInitializer;
 import com.minis.web.bind.support.WebDataBinderFactory;
 import com.minis.web.method.HandlerMethod;
 import com.minis.web.servlet.HandlerAdapter;
+import com.minis.web.servlet.ModelAndView;
 
 /**
  * HandlerAdapter 的实现类
@@ -36,22 +37,26 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, Application
 
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        handleInternal(request, response, (HandlerMethod) handler);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        return handleInternal(request, response, (HandlerMethod) handler);
     }
 
-    private void handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handler) {
+    private ModelAndView handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handler) {
+        ModelAndView mav = null;
+
         try {
-            invokeHandlerMethod(request, response, handler);
+            mav = invokeHandlerMethod(request, response, handler);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return mav;
     }
 
     /**
      * 调用请求对应的处理方法
      */
-    protected void invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+    protected ModelAndView invokeHandlerMethod(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
         // 要调用的方法的参数列表
         Parameter[] methodParameters = handlerMethod.getMethod().getParameters();
 
@@ -75,10 +80,25 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, Application
         // 传入参数，调用处理方法
         Method invocableMethod = handlerMethod.getMethod();
         Object returnObj = invocableMethod.invoke(handlerMethod.getBean(), methodParamObjs);
+
+        ModelAndView mav = null;
+        // 如果返回带有 @ResponseBody 注解，直接把返回对象格式化为 (JSON) 字符串写到 response
         if (invocableMethod.isAnnotationPresent(ResponseBody.class)) {
             this.messageConverter.write(returnObj, response);
         }
+        // 返回的是前端页面，把返回结果包装成 ModelAndView 对象返回
+        else {
+            if (returnObj instanceof ModelAndView) {
+                mav = (ModelAndView) returnObj;
+            }
+            else if(returnObj instanceof String) {
+                String sTarget = (String) returnObj;
+                mav = new ModelAndView();
+                mav.setViewName(sTarget);
+            }
+        }
 
+        return mav;
     }
 
     public WebBindingInitializer getWebBindingInitializer() {
