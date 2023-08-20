@@ -14,4 +14,9 @@ public @interface RequestMapping {
      */
     String value() default "";
 
+    /**
+     * 请求类型: GET / POST
+     */
+    RequestMethod[] method() default {};
+
 }

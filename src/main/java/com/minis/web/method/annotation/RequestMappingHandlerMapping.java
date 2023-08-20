@@ -67,6 +67,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping, Application
             return null;
         }
 
+        // 根据请求类型 GET / POST 匹配对应的调用方法
         Method method = this.mappingRegistry.getMappingMethods().get(sPath);
         Object obj = this.mappingRegistry.getMappingObjs().get(sPath);
         HandlerMethod handlerMethod = new HandlerMethod(method, obj);
