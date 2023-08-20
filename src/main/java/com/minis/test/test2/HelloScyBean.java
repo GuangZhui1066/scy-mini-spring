@@ -4,6 +4,7 @@ import com.minis.beans.factory.annotation.Autowired;
 import com.minis.iocTestClass.ScyTestServiceImpl;
 import com.minis.web.bind.annotation.RequestMapping;
 import com.minis.web.bind.annotation.ResponseBody;
+import com.minis.web.servlet.ModelAndView;
 
 public class HelloScyBean {
 
@@ -45,6 +46,24 @@ public class HelloScyBean {
         returnObj.setPrice(10.66 * scyParam.getAge());
         returnObj.setTime(scyParam.getBirthday());
         return returnObj;
+    }
+
+    /**
+     * 测试 test.jsp 页面
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/scyMavTest?name=scyscy
+     */
+    @RequestMapping("/scyMavTest")
+    public ModelAndView doGet6(ScyParam scyParam) {
+        ModelAndView mav = new ModelAndView("test", "msg", scyParam.getName());
+        return mav;
+    }
+
+    /**
+     * 测试 error.jsp 页面
+     */
+    @RequestMapping("/scyMavError")
+    public String doGet7() {
+        return "error";
     }
 
 }
