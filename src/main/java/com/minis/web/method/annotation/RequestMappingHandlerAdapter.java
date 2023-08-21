@@ -68,12 +68,20 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter, Application
         int i = 0;
         for (Parameter methodParameter : methodParameters) {
             // 创建参数实例
-            // todo: 如果参数类型是 Double, int 等，因为其没有无参构造方法，所以不能用 newInstance() 方法创建实例，会抛 InstantiationException 实例化异常
-            Object methodParamObj = methodParameter.getType().newInstance();
-            WebDataBinder wdb = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
-            webBindingInitializer.initBinder(wdb);
-            wdb.bind(request);
-            methodParamObjs[i] = methodParamObj;
+            if (methodParameter.getType() == HttpServletRequest.class) {
+                methodParamObjs[i] = request;
+            }
+            else if (methodParameter.getType() == HttpServletResponse.class) {
+                methodParamObjs[i] = response;
+            }
+            else {
+                // todo: 如果参数类型是 Double, int 等，因为其没有无参构造方法，所以不能用 newInstance() 方法创建实例，会抛 InstantiationException 实例化异常
+                Object methodParamObj = methodParameter.getType().newInstance();
+                WebDataBinder wdb = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
+                webBindingInitializer.initBinder(wdb);
+                wdb.bind(request);
+                methodParamObjs[i] = methodParamObj;
+            }
             i++;
         }
 
