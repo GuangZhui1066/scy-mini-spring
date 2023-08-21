@@ -1,5 +1,10 @@
 package com.minis.test.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.test.jdbc.entity.User;
 import com.minis.test.jdbc.service.UserService;
@@ -32,13 +37,24 @@ public class JdbcMainTest {
     }
 
     /**
-     * 访问：http://localhost:8080/scy_mini_spring_war_exploded//jdbc/argSetter?name=scy&birthday=2022-08-15
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/jdbc/argSetter?name=scy&birthday=2022-08-15
      */
     @RequestMapping("/jdbc/argSetter")
     @ResponseBody
     public User doTest3(User param) {
         User user = userService.getUserInfo3(param.getName(), param.getBirthday());
         return user;
+    }
+
+    /**
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/jdbc/resultSet?idStart=0
+     */
+    @RequestMapping("/jdbc/resultSet")
+    @ResponseBody
+    public List<User> doTest4(HttpServletRequest request, HttpServletResponse response) {
+        int idStart = Integer.parseInt(request.getParameter("idStart"));;
+        List<User> users = userService.getUserList(idStart);
+        return users;
     }
 
 }
