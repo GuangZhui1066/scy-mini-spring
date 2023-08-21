@@ -31,4 +31,14 @@ public class JdbcMainTest {
         return user;
     }
 
+    /**
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded//jdbc/argSetter?name=scy&birthday=2022-08-15
+     */
+    @RequestMapping("/jdbc/argSetter")
+    @ResponseBody
+    public User doTest3(User param) {
+        User user = userService.getUserInfo3(param.getName(), param.getBirthday());
+        return user;
+    }
+
 }

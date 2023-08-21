@@ -30,10 +30,12 @@ public class DefaultHttpMessageConverter implements HttpMessageConverter {
         response.flushBuffer();
     }
 
-    private void writeInternal(Object obj, HttpServletResponse response) throws IOException{
-        String sJsonStr = this.objectMapper.writeValuesAsString(obj);
+    private void writeInternal(Object obj, HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
-        pw.write(sJsonStr);
+        if (obj != null) {
+            String sJsonStr = this.objectMapper.writeValuesAsString(obj);
+            pw.write(sJsonStr);
+        }
     }
 
     public ObjectMapper getObjectMapper() {

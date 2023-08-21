@@ -50,4 +50,22 @@ public class UserService {
         );
     }
 
+    public User getUserInfo3(String name, Date birthday) {
+        final String sql = "select id, name, age, birthday from user where name = ? and birthday = ?";
+        return (User) jdbcTemplate.query(sql, new Object[]{name, birthday},
+            (pstmt) -> {
+                ResultSet rs = pstmt.executeQuery();
+                User user = null;
+                if (rs.next()) {
+                    user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setName(rs.getString("name"));
+                    user.setAge(rs.getInt("age"));
+                    user.setBirthday(new Date(rs.getDate("birthday").getTime()));
+                }
+                return user;
+            }
+        );
+    }
+
 }
