@@ -4,10 +4,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.minis.beans.BeanWrapperImpl;
 import com.minis.beans.PropertyEditor;
 import com.minis.beans.PropertyValues;
 import com.minis.util.WebUtils;
-import com.minis.web.BeanWrapperImpl;
 
 /**
  * 代表了一个参数类对象 (目标对象)

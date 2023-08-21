@@ -1,12 +1,7 @@
-package com.minis.web;
+package com.minis.beans;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import com.minis.beans.PropertyEditor;
-import com.minis.beans.PropertyEditorRegistrySupport;
-import com.minis.beans.PropertyValue;
-import com.minis.beans.PropertyValues;
 
 /**
  * bean 的包装类

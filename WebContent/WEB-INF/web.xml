@@ -20,7 +20,7 @@
         <servlet-name>minisMVC</servlet-name>
 
         <!-- Servlet 对应的类，即继承了 HttpServlet 的类 -->
-        <servlet-class>com.minis.web.DispatcherServlet</servlet-class>
+        <servlet-class>com.minis.web.servlet.DispatcherServlet</servlet-class>
 
         <!-- 初始化的配置，初始化时需要的配置都在 minisMVC-servlet.xml 文件中 -->
         <init-param>

@@ -1,4 +1,4 @@
-package com.minis.web;
+package com.minis.web.servlet;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,11 +19,6 @@ import com.minis.web.context.WebApplicationContext;
 import com.minis.web.context.support.AnnotationConfigWebApplicationContext;
 import com.minis.web.context.support.XmlScanComponentHelper;
 import com.minis.web.method.HandlerMethod;
-import com.minis.web.servlet.HandlerAdapter;
-import com.minis.web.servlet.HandlerMapping;
-import com.minis.web.servlet.ModelAndView;
-import com.minis.web.servlet.View;
-import com.minis.web.servlet.ViewResolver;
 
 /**
  * Servlet 控制器
