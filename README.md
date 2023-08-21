@@ -144,4 +144,11 @@ navicat 连接 mysql，创建数据库、表
 
 ### 抽取 JdbcTemplate
 把 JDBC 的标准流程作为模版固定下来，流程中可以变化的部分让子类重写。</br>
-注意：需要引入 mysql-connector-java 包，设置 artifacts，使得编译后的 out 目录中包含 mysql-connector-java 的 jar 包。</br>
+注意：需要在 pom 中引入 mysql-connector-java 包，并设置项目的 artifacts，使得编译后的 out 目录中包含 mysql-connector-java 的 jar 包。</br>
+![img.png](images/img7.png)
+
+四次重构，重构数据访问和处理的流程
+1. 模版化，把通用代码写到 JdbcTemplate 中，把变化的部分交给子类实现
+2. 通过 Callback 模式，把上一步中子类里实现的逻辑包装成回调函数，把回调函数当参数传给 JdbcTemplate。这样就不需要为每一个数据表都增加一个具体的实现类
+3. 结合 IoC 容器，把 JdbcTemplate 等声明为 bean 管理，并用 @Autowire 注解自动注入
+4. 抽取出数据源的概念，管理 Connection，把业务逻辑和底层的数据库管理拆分开
