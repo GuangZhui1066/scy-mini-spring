@@ -2,8 +2,9 @@ package com.minis.jdbc.core;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Date;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -75,6 +76,41 @@ public class JdbcTemplate {
                 pstmt.close();
                 con.close();
             } catch (Exception ignored) {};
+        }
+
+        return null;
+    }
+
+    /**
+     * 查询结果是多行数据
+     */
+    public <T> List<T> query(String sql, Object[] args, RowMapper<T> rowMapper) {
+        RowMapperResultSetExtractor<T> resultExtractor = new RowMapperResultSetExtractor<>(rowMapper);
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            // 建立数据库连接
+            con = dataSource.getConnection();
+            // 准备 sql 语句
+            pstmt = con.prepareStatement(sql);
+            // 为 sql 语句设置参数
+            ArgumentPreparedStatementSetter argumentSetter = new ArgumentPreparedStatementSetter(args);
+            argumentSetter.setValues(pstmt);
+            // 执行 sql 语句
+            rs = pstmt.executeQuery();
+
+            // 把 sql 执行的结果集映射为对象列表，返回
+            return resultExtractor.extractData(rs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                pstmt.close();
+                con.close();
+            } catch (Exception ignored) {}
         }
 
         return null;
