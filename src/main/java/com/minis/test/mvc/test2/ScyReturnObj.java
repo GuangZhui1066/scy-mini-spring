@@ -1,4 +1,4 @@
-package com.minis.test.test2;
+package com.minis.test.mvc.test2;
 
 import java.util.Date;
 

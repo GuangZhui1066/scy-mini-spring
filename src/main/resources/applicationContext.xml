@@ -43,7 +43,7 @@
 
 
     <!-- webBindingInitializer -->
-    <bean name="webBindingInitializer" class="com.minis.test.DateInitializer"/>
+    <bean name="webBindingInitializer" class="com.minis.test.mvc.DateInitializer"/>
 
     <!-- messageConverter -->
     <bean name="messageConverter" class="com.minis.http.converter.DefaultHttpMessageConverter">

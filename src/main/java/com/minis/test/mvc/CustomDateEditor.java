@@ -1,4 +1,4 @@
-package com.minis.test;
+package com.minis.test.mvc;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

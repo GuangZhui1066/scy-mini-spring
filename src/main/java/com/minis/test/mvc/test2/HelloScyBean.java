@@ -1,4 +1,4 @@
-package com.minis.test.test2;
+package com.minis.test.mvc.test2;
 
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.iocTestClass.ScyTestServiceImpl;
