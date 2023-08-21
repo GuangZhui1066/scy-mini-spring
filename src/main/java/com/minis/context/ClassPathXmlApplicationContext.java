@@ -32,7 +32,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         Resource resource = new ClassPathXmlResource(fileName);
         DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
-        defaultListableBeanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+        //defaultListableBeanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(defaultListableBeanFactory);
         reader.loadBeanDefinitions(resource);
         this.beanFactory = defaultListableBeanFactory;
@@ -66,6 +66,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     /**
      * 事件机制
      */
+    // todo: modify 参考minis
     @Override
     public void registerListeners() {
         ApplicationListener listener = new ApplicationListener();
@@ -92,11 +93,13 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     /**
      * bean处理器
      */
+    // todo: modify 参考minis
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
 
     }
 
+    // todo: modify 参考minis
     @Override
     public void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
         this.beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
