@@ -32,4 +32,22 @@ public class UserService {
         );
     }
 
+    public User getUserInfo2(int id) {
+        final String sql = "select id, name, age, birthday from user where id = ?";
+        return (User) jdbcTemplate.query(sql, new Object[]{new Integer(id)},
+            (pstmt) -> {
+                ResultSet rs = pstmt.executeQuery();
+                User user = null;
+                if (rs.next()) {
+                    user = new User();
+                    user.setId(id);
+                    user.setName(rs.getString("name"));
+                    user.setAge(rs.getInt("age"));
+                    user.setBirthday(new Date(rs.getDate("birthday").getTime()));
+                }
+                return user;
+            }
+        );
+    }
+
 }

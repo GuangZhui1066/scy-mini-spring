@@ -24,4 +24,11 @@ public class JdbcMainTest {
         return user;
     }
 
+    @RequestMapping("/jdbc/callback2")
+    @ResponseBody
+    public User doTest2() {
+        User user = userService.getUserInfo2(1);
+        return user;
+    }
+
 }
