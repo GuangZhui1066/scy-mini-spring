@@ -56,4 +56,11 @@
         <property type="String" name="decimalFormat" value="###.##"/>
     </bean>
 
+
+    <!-- JdbcTemplate -->
+    <bean name="jdbcTemplate" class="com.minis.jdbc.core.JdbcTemplate"/>
+
+    <!-- UserService -->
+    <bean name="userService" class="com.minis.test.jdbc.service.UserService" />
+
 </beans>

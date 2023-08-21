@@ -12,7 +12,7 @@ import com.minis.test.jdbc.entity.User;
  */
 public class UserJdbcImpl extends JdbcTemplate {
 
-    @Override
+    //@Override
     protected Object doInStatement(ResultSet rs) {
         User user = null;
 

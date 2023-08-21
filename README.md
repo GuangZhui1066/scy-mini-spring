@@ -143,4 +143,5 @@ navicat 连接 mysql，创建数据库、表
 
 
 ### 抽取 JdbcTemplate
-把 JDBC 的标准流程作为模版固定下来，流程中可以变化的部分让子类重写
+把 JDBC 的标准流程作为模版固定下来，流程中可以变化的部分让子类重写。</br>
+注意：需要引入 mysql-connector-java 包，设置 artifacts，使得编译后的 out 目录中包含 mysql-connector-java 的 jar 包。</br>
