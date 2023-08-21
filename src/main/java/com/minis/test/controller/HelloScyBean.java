@@ -1,7 +1,9 @@
-package com.minis.test.mvc.test2;
+package com.minis.test.controller;
 
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.iocTestClass.ScyTestServiceImpl;
+import com.minis.test.mvc.entity.ScyParam;
+import com.minis.test.mvc.entity.ScyReturnObj;
 import com.minis.web.bind.annotation.RequestMapping;
 import com.minis.web.bind.annotation.ResponseBody;
 import com.minis.web.servlet.ModelAndView;

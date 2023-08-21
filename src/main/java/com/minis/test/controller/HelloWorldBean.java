@@ -1,4 +1,4 @@
-package com.minis.test.mvc;
+package com.minis.test.controller;
 
 import com.minis.web.bind.annotation.RequestMapping;
 

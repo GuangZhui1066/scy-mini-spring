@@ -1,4 +1,4 @@
-package com.minis.test.jdbc;
+package com.minis.test.controller;
 
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.test.jdbc.entity.User;
