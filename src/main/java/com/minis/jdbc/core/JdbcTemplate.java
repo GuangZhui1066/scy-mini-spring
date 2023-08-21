@@ -62,17 +62,10 @@ public class JdbcTemplate {
         try {
             con = dataSource.getConnection();
             pstmt = con.prepareStatement(sql);
-            // 按照顺序为 sql 语句的参数赋值
-            for (int i = 0; i < args.length; i++) {
-                Object arg = args[i];
-                if (arg instanceof String) {
-                    pstmt.setString(i + 1, (String) arg);
-                } else if (arg instanceof Integer) {
-                    pstmt.setInt(i + 1, (int) arg);
-                } else if (arg instanceof Date) {
-                    pstmt.setDate(i + 1, new java.sql.Date(((Date) arg).getTime()));
-                }
-            }
+
+            // 通过 argumentSetter 统一设置 sql 中的参数值
+            ArgumentPreparedStatementSetter argumentSetter = new ArgumentPreparedStatementSetter(args);
+            argumentSetter.setValues(pstmt);
 
             return pstmtcallback.doInPreparedStatement(pstmt);
         } catch (Exception e) {
