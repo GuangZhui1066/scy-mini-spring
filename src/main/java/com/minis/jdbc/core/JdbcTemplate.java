@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Date;
 
+import javax.sql.DataSource;
+
 /**
  * JdbcTemplate
  *
@@ -14,17 +16,26 @@ import java.util.Date;
  */
 public class JdbcTemplate {
 
+    private DataSource dataSource;
+
     public JdbcTemplate() {
     }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
 
     public Object query(StatementCallback stmtCallback) {
         Connection con = null;
         Statement stmt = null;
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiniSpring?useSSL=false&useUniCode=true&characterEncoding=utf8&user=root&password=");
-
+            con = dataSource.getConnection();
             stmt = con.createStatement();
             return stmtCallback.doInStatement(stmt);
         } catch (Exception e) {
@@ -50,9 +61,7 @@ public class JdbcTemplate {
         PreparedStatement pstmt = null;
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/MiniSpring?useSSL=false&useUniCode=true&characterEncoding=utf8&user=root&password=");
-
+            con = dataSource.getConnection();
             pstmt = con.prepareStatement(sql);
             // 按照顺序为 sql 语句的参数赋值
             for (int i = 0; i < args.length; i++) {
