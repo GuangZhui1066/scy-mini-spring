@@ -63,11 +63,12 @@
     </bean>
 
     <!-- dataSource -->
-    <bean name="dataSource" class="com.minis.jdbc.datasource.SingleConnectionDataSource">
+    <bean name="dataSource" class="com.minis.jdbc.pool.PooledDataSource">
         <property type="String" name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property type="String" name="url" value="jdbc:mysql://localhost:3306/MiniSpring?useSSL=false&amp;useUniCode=true&amp;characterEncoding=utf8"/>
         <property type="String" name="username" value="root"/>
         <property type="String" name="password" value=""/>
+        <property type="int" name="initialSize" value="3"/>
     </bean>
 
     <!-- UserService -->
