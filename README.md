@@ -205,6 +205,4 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
 通过 Java 中的动态代理即可实现。
 
 
-### 代理模式
-
 
