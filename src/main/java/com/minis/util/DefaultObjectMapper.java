@@ -43,6 +43,9 @@ public class DefaultObjectMapper implements ObjectMapper {
         if (obj instanceof List<?>) {
             return writeListAsString((List<?>) obj);
         }
+        if (obj instanceof Integer) {
+            return "Integer: " + obj;
+        }
 
         String sJsonStr = "{";
         Class<?> clz = obj.getClass();

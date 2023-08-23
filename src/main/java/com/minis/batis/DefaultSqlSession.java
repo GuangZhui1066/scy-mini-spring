@@ -49,8 +49,11 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
-    public int update() {
-        return 0;
+    public int update(String sqlId, Object[] args) {
+        String sql = this.sqlSessionFactory.getMapperNode(sqlId).getSql();
+        System.out.println("sqlId: " + sqlId + ", sql: " + sql);
+
+        return jdbcTemplate.update(sql, args);
     }
 
 }

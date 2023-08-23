@@ -28,7 +28,7 @@ public interface SqlSession {
     /**
      * 更新
      */
-    int update();
+    int update(String sqlId, Object[] args);
 
 
     void setJdbcTemplate(JdbcTemplate jdbcTemplate);

@@ -8,4 +8,12 @@
         where id = ?
     </select>
 
+    <update id="updateById" parameterType="com.minis.test.jdbc.entity.User" resultType="java.lang.Integer">
+        update user
+        set name = ?,
+            age = ?,
+            birthday = ?
+        where id = ?
+    </update>
+
 </mapper>

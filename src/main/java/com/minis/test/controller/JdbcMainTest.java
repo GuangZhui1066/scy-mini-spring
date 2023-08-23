@@ -68,4 +68,13 @@ public class JdbcMainTest {
         return user;
     }
 
+    /**
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/jdbc/update?id=1&name=scy22&age=222&birthday=2022-08-22
+     */
+    @RequestMapping("/jdbc/update")
+    @ResponseBody
+    public Integer doTest6(User user) {
+        return userService.updateUser(user);
+    }
+
 }

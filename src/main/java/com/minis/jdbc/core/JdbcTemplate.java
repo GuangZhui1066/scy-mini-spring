@@ -116,5 +116,32 @@ public class JdbcTemplate {
         return null;
     }
 
+    /**
+     * 更新
+     */
+    public int update(String sql, Object[] args) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = dataSource.getConnection();
+            pstmt = con.prepareStatement(sql);
+
+            ArgumentPreparedStatementSetter argumentSetter = new ArgumentPreparedStatementSetter(args);
+            argumentSetter.setValues(pstmt);
+
+            return pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                pstmt.close();
+                con.close();
+            } catch (Exception ignored) {};
+        }
+
+        return 0;
+    }
+
 }
 

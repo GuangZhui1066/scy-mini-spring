@@ -114,4 +114,11 @@ public class UserService {
         );
     }
 
+    public int updateUser(User user) {
+        String sqlId = "com.minis.test.jdbc.entity.User.updateById";
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        return sqlSession.update(sqlId,
+            new Object[]{user.getName(), user.getAge(), user.getBirthday(), user.getId()});
+    }
+
 }
