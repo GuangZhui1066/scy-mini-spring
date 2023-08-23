@@ -16,17 +16,29 @@ import javax.sql.DataSource;
  */
 public class JdbcTemplate {
 
-    private DataSource dataSource;
+    /**
+     * 读写操作的数据源分离
+     */
+    private DataSource readDataSource;
+    private DataSource writeDataSource;
 
     public JdbcTemplate() {
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public DataSource getReadDataSource() {
+        return readDataSource;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setReadDataSource(DataSource readDataSource) {
+        this.readDataSource = readDataSource;
+    }
+
+    public DataSource getWriteDataSource() {
+        return writeDataSource;
+    }
+
+    public void setWriteDataSource(DataSource writeDataSource) {
+        this.writeDataSource = writeDataSource;
     }
 
 
@@ -35,7 +47,7 @@ public class JdbcTemplate {
         Statement stmt = null;
 
         try {
-            con = dataSource.getConnection();
+            con = readDataSource.getConnection();
             stmt = con.createStatement();
             return stmtCallback.doInStatement(stmt);
         } catch (Exception e) {
@@ -61,7 +73,7 @@ public class JdbcTemplate {
         PreparedStatement pstmt = null;
 
         try {
-            con = dataSource.getConnection();
+            con = readDataSource.getConnection();
             pstmt = con.prepareStatement(sql);
 
             // 通过 argumentSetter 统一设置 sql 中的参数值
@@ -92,7 +104,7 @@ public class JdbcTemplate {
 
         try {
             // 建立数据库连接
-            con = dataSource.getConnection();
+            con = readDataSource.getConnection();
             // 准备 sql 语句
             pstmt = con.prepareStatement(sql);
             // 为 sql 语句设置参数
@@ -124,7 +136,7 @@ public class JdbcTemplate {
         PreparedStatement pstmt = null;
 
         try {
-            con = dataSource.getConnection();
+            con = writeDataSource.getConnection();
             pstmt = con.prepareStatement(sql);
 
             ArgumentPreparedStatementSetter argumentSetter = new ArgumentPreparedStatementSetter(args);

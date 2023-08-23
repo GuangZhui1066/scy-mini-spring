@@ -59,11 +59,21 @@
 
     <!-- JdbcTemplate -->
     <bean name="jdbcTemplate" class="com.minis.jdbc.core.JdbcTemplate">
-        <property type="javax.sql.DataSource" name="dataSource" ref="dataSource"/>
+        <property type="javax.sql.DataSource" name="readDataSource" ref="readDataSource"/>
+        <property type="javax.sql.DataSource" name="writeDataSource" ref="writeDataSource"/>
     </bean>
 
-    <!-- dataSource -->
-    <bean name="dataSource" class="com.minis.jdbc.pool.PooledDataSource">
+    <!-- readDataSource -->
+    <bean name="readDataSource" class="com.minis.jdbc.pool.PooledDataSource">
+        <property type="String" name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property type="String" name="url" value="jdbc:mysql://localhost:3306/MiniSpring?useSSL=false&amp;useUniCode=true&amp;characterEncoding=utf8"/>
+        <property type="String" name="username" value="root"/>
+        <property type="String" name="password" value=""/>
+        <property type="int" name="initialSize" value="3"/>
+    </bean>
+
+    <!-- writeDataSource -->
+    <bean name="writeDataSource" class="com.minis.jdbc.pool.PooledDataSource">
         <property type="String" name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property type="String" name="url" value="jdbc:mysql://localhost:3306/MiniSpring?useSSL=false&amp;useUniCode=true&amp;characterEncoding=utf8"/>
         <property type="String" name="username" value="root"/>
@@ -73,7 +83,6 @@
 
     <!-- UserService -->
     <bean name="userService" class="com.minis.test.jdbc.service.UserService" />
-
 
     <!-- sqlSessionFactory -->
     <bean name="sqlSessionFactory" class="com.minis.batis.DefaultSqlSessionFactory" init-method="init">
