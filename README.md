@@ -162,3 +162,34 @@ navicat 连接 mysql，创建数据库、表
 ### SQL 语句配置化
 之前的 sql 语句都是在代码中硬编码的，但我们需要把 sql 语句放在代码之外的配置文件里，类似 MyBatis. </br>
 MyBatis 是一个支持自定义 SQL、存储过程和复杂映射的框架。它将手工的 JDBC 代码都简化掉了，通过 XML 文件或注解完成数据库记录与 Java 对象的转换。</br>
+
+
+### 连接池并发问题解决思路
+
+    // 用两个队列分别表示空闲连接和忙碌连接
+    private BlockingQueue<PooledConnection> busyConnections; 
+    private BlockingQueue<PooledConnection> idleConnections;
+
+    // 获取连接
+    while (true) {
+        conn = idle.poll();
+    }
+
+    // 考虑：获取连接时，如果没有空闲连接，就判断忙碌连接数没有达到最大，没有就创建一个新的连接
+    // 因为是多线程，所以这里使用 CAS 技术
+    if (size.get() < getPoolProperties().getMaxActive()) {
+        if (size.addAndGet(1) > getPoolProperties().getMaxActive()) {
+            size.decrementAndGet();
+        } else {
+            return createConnection(now, con, username, password);
+        }
+    }
+
+    // 考虑 timeout
+    if ((System.currentTimeMillis() - now) >= maxWait) {
+        throw new PoolExhaustedException(
+            "Timeout: Unable to fetch a connection in " + (maxWait / 1000) + " seconds.");
+        } else {
+            continue;
+        }
+    }
