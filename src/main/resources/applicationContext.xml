@@ -2,7 +2,7 @@
 
 <beans>
     <!-- scyTestService -->
-    <bean name="scyTestService" class="com.minis.iocTestClass.ScyTestServiceImpl" init-method="initScyTestService">
+    <bean name="scyTestService" class="com.test.ioc.ScyTestServiceImpl" init-method="initScyTestService">
         <!-- bean 的构造器参数 -->
         <constructor-arg name="name" type="String" value="scy"/>
         <constructor-arg name="level" type="Integer" value="25"/>
@@ -10,18 +10,18 @@
         <property name="property1" type="String" value="Scy"/>
         <property name="property2" type="Integer" value="25"/>
         <!-- bean 的成员属性也是一个 bean -->
-        <property name="scyBaseService" type="com.minis.iocTestClass.ScyBaseService" ref="scyBaseService"/>
+        <property name="scyBaseService" type="com.test.ioc.ScyBaseService" ref="scyBaseService"/>
     </bean>
 
     <!-- scyBaseService -->
-    <bean name="scyBaseService" class="com.minis.iocTestClass.ScyBaseService">
-        <property name="scyCircleService" type="com.minis.iocTestClass.ScyCircleService" ref="scyCircleService"/>
+    <bean name="scyBaseService" class="com.test.ioc.ScyBaseService">
+        <property name="scyCircleService" type="com.test.ioc.ScyCircleService" ref="scyCircleService"/>
     </bean>
 
     <!-- scyCircleService -->
-    <bean name="scyCircleService" class="com.minis.iocTestClass.ScyCircleService">
+    <bean name="scyCircleService" class="com.test.ioc.ScyCircleService">
         <!-- scyTestService 属性使用@Autowire注解注入，不通过xml配置注入  -->
-        <!-- <property name="scyTestService" type="com.minis.iocTestClass.ScyTestServiceImpl" ref="scyTestService"/> -->
+        <!-- <property name="scyTestService" type="com.test.ioc.ScyTestServiceImpl" ref="scyTestService"/> -->
     </bean>
 
 
@@ -43,7 +43,7 @@
 
 
     <!-- webBindingInitializer -->
-    <bean name="webBindingInitializer" class="com.minis.test.mvc.DateInitializer"/>
+    <bean name="webBindingInitializer" class="com.test.mvc.DateInitializer"/>
 
     <!-- messageConverter -->
     <bean name="messageConverter" class="com.minis.http.converter.DefaultHttpMessageConverter">
@@ -82,7 +82,7 @@
     </bean>
 
     <!-- UserService -->
-    <bean name="userService" class="com.minis.test.jdbc.service.UserService" />
+    <bean name="userService" class="com.test.jdbc.service.UserService" />
 
     <!-- sqlSessionFactory -->
     <bean name="sqlSessionFactory" class="com.minis.batis.DefaultSqlSessionFactory" init-method="init">

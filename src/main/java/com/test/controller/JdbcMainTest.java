@@ -1,4 +1,4 @@
-package com.minis.test.controller;
+package com.test.controller;
 
 import java.util.List;
 
@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.minis.beans.factory.annotation.Autowired;
-import com.minis.test.jdbc.entity.User;
-import com.minis.test.jdbc.service.UserService;
 import com.minis.web.bind.annotation.RequestMapping;
 import com.minis.web.bind.annotation.ResponseBody;
+import com.test.jdbc.entity.User;
+import com.test.jdbc.service.UserService;
 
 /**
  *

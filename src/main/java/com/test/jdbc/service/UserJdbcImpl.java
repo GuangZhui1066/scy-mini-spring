@@ -1,11 +1,11 @@
-package com.minis.test.jdbc.service;
+package com.test.jdbc.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
 import com.minis.jdbc.core.JdbcTemplate;
-import com.minis.test.jdbc.entity.User;
+import com.test.jdbc.entity.User;
 
 /**
  * 查询 user 表的 JDBC 实现

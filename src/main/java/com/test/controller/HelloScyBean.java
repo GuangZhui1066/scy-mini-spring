@@ -1,12 +1,12 @@
-package com.minis.test.controller;
+package com.test.controller;
 
 import com.minis.beans.factory.annotation.Autowired;
-import com.minis.iocTestClass.ScyTestServiceImpl;
-import com.minis.test.mvc.entity.ScyParam;
-import com.minis.test.mvc.entity.ScyReturnObj;
 import com.minis.web.bind.annotation.RequestMapping;
 import com.minis.web.bind.annotation.ResponseBody;
 import com.minis.web.servlet.ModelAndView;
+import com.test.ioc.ScyTestServiceImpl;
+import com.test.mvc.entity.ScyParam;
+import com.test.mvc.entity.ScyReturnObj;
 
 public class HelloScyBean {
 

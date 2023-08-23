@@ -1,4 +1,4 @@
-package com.minis.test.jdbc.service;
+package com.test.jdbc.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ import com.minis.batis.SqlSessionFactory;
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.jdbc.core.JdbcTemplate;
 import com.minis.jdbc.core.RowMapper;
-import com.minis.test.jdbc.entity.User;
+import com.test.jdbc.entity.User;
 
 public class UserService {
 
@@ -97,7 +97,7 @@ public class UserService {
     }
 
     public User getUserById(int userId) {
-        String sqlId = "com.minis.test.jdbc.entity.User.getUserById";
+        String sqlId = "com.test.jdbc.entity.User.getUserById";
         SqlSession sqlSession = sqlSessionFactory.openSession();
         return (User) sqlSession.selectOne(sqlId, new Object[]{userId},
             (pstmt) -> {
@@ -115,7 +115,7 @@ public class UserService {
     }
 
     public int updateUser(User user) {
-        String sqlId = "com.minis.test.jdbc.entity.User.updateById";
+        String sqlId = "com.test.jdbc.entity.User.updateById";
         SqlSession sqlSession = sqlSessionFactory.openSession();
         return sqlSession.update(sqlId,
             new Object[]{user.getName(), user.getAge(), user.getBirthday(), user.getId()});

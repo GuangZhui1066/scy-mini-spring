@@ -1,4 +1,4 @@
-package com.minis.test.mvc.entity;
+package com.test.mvc.entity;
 
 import java.util.Date;
 

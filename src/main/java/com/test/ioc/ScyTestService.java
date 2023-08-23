@@ -1,4 +1,4 @@
-package com.minis.iocTestClass;
+package com.test.ioc;
 
 public interface ScyTestService {
 

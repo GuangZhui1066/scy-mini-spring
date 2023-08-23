@@ -1,9 +1,9 @@
-package com.minis.test.mvc;
+package com.test.mvc;
 
 import java.util.Date;
 
-import com.minis.web.bind.support.WebBindingInitializer;
 import com.minis.web.bind.WebDataBinder;
+import com.minis.web.bind.support.WebBindingInitializer;
 
 /**
  * 初始化 WebDataBinder: 为 WebDataBinder 注册自定义的 Date 类型转换器

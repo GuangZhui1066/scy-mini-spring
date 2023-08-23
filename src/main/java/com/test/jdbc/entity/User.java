@@ -1,4 +1,4 @@
-package com.minis.test.jdbc.entity;
+package com.test.jdbc.entity;
 
 import java.util.Date;
 

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mapper namespace="com.minis.test.jdbc.entity.User">
+<mapper namespace="com.test.jdbc.entity.User">
 
-    <select id="getUserById" parameterType="java.lang.Integer" resultType="com.minis.test.jdbc.entity.User">
+    <select id="getUserById" parameterType="java.lang.Integer" resultType="com.test.jdbc.entity.User">
         select id, name, age, birthday
         from user
         where id = ?
     </select>
 
-    <update id="updateById" parameterType="com.minis.test.jdbc.entity.User" resultType="java.lang.Integer">
+    <update id="updateById" parameterType="com.test.jdbc.entity.User" resultType="java.lang.Integer">
         update user
         set name = ?,
             age = ?,
