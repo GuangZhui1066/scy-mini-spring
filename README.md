@@ -205,4 +205,13 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
 通过 Java 中的动态代理即可实现。
 
 
+#### 非侵入性编程
+动态代理对代码的侵入性强。需要在业务逻辑中手动地创建代理对象：
 
+    DynamicProxyHelper proxyHelperOne = new DynamicProxyHelper(actionOne);
+    ActionOne proxyOne = (ActionOne) proxyHelperOne.getProxy();
+    String resultOne = proxyOne.doActionOne(msg);
+
+应该实现非侵入性编程。不用在业务逻辑中手动创建代理，而是直接调用用原本的业务接口，把实现类和代理类配置在外面。这样就可以在业务代码中不感知代理对象：
+
+    String resultOne = actionOne.doActionOne(msg);
