@@ -57,4 +57,15 @@ public class JdbcMainTest {
         return users;
     }
 
+    /**
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/jdbc/mybatis?id=1
+     */
+    @RequestMapping("/jdbc/mybatis")
+    @ResponseBody
+    public User doTest5(HttpServletRequest request, HttpServletResponse response) {
+        int id = Integer.parseInt(request.getParameter("id"));;
+        User user = userService.getUserById(id);
+        return user;
+    }
+
 }

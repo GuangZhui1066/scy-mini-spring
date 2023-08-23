@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import com.minis.batis.SqlSession;
+import com.minis.batis.SqlSessionFactory;
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.jdbc.core.JdbcTemplate;
 import com.minis.jdbc.core.RowMapper;
@@ -14,6 +16,9 @@ public class UserService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
 
     public User getUserInfo(int id) {
@@ -87,6 +92,24 @@ public class UserService {
                     user.setBirthday(new Date(rs.getDate("birthday").getTime()));
                     return user;
                 }
+            }
+        );
+    }
+
+    public User getUserById(int userId) {
+        String sqlId = "com.minis.test.jdbc.entity.User.getUserById";
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        return (User) sqlSession.selectOne(sqlId, new Object[]{userId},
+            (pstmt) -> {
+                ResultSet rs = pstmt.executeQuery();
+                User user = null;
+                if (rs.next()) {
+                    user = new User();
+                    user.setId(userId);
+                    user.setName(rs.getString("name"));
+                    user.setBirthday(new java.util.Date(rs.getDate("birthday").getTime()));
+                }
+                return user;
             }
         );
     }
