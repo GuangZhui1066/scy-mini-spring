@@ -11,11 +11,6 @@ import com.minis.web.bind.annotation.ResponseBody;
 import com.test.jdbc.entity.User;
 import com.test.jdbc.service.UserService;
 
-/**
- *
- * 注意：
- *   1. 需要在 out 目录中添加
- */
 public class JdbcMainTest {
 
     @Autowired
@@ -52,7 +47,7 @@ public class JdbcMainTest {
     @RequestMapping("/jdbc/resultSet")
     @ResponseBody
     public List<User> doTest4(HttpServletRequest request, HttpServletResponse response) {
-        int idStart = Integer.parseInt(request.getParameter("idStart"));;
+        int idStart = Integer.parseInt(request.getParameter("idStart"));
         List<User> users = userService.getUserList(idStart);
         return users;
     }
@@ -63,7 +58,7 @@ public class JdbcMainTest {
     @RequestMapping("/jdbc/mybatis")
     @ResponseBody
     public User doTest5(HttpServletRequest request, HttpServletResponse response) {
-        int id = Integer.parseInt(request.getParameter("id"));;
+        int id = Integer.parseInt(request.getParameter("id"));
         User user = userService.getUserById(id);
         return user;
     }
