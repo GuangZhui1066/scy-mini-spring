@@ -1,4 +1,4 @@
-package com.test.controller;
+package com.test.main;
 
 import com.minis.beans.factory.annotation.Autowired;
 import com.minis.web.bind.annotation.RequestMapping;

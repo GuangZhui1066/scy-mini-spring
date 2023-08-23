@@ -1,4 +1,4 @@
-package com.minis;
+package com.test.main;
 
 import java.util.Map;
 
@@ -6,11 +6,15 @@ import com.minis.beans.BeansException;
 import com.minis.context.ApplicationListener;
 import com.minis.context.ClassPathXmlApplicationContext;
 import com.minis.context.ContextRefreshEvent;
+import com.test.ioc.ScyBaseService;
+import com.test.ioc.ScyCircleService;
+import com.test.ioc.ScyTestServiceImpl;
 
 public class SpringTest {
 
     public static void main(String[] args) throws BeansException {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+        //ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
         /**
          * 测试获取 bean

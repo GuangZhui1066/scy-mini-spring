@@ -3,9 +3,9 @@
 <!--<beans>-->
 <!--    &lt;!&ndash; 配置 HelloWorldBean &ndash;&gt;-->
 <!--    &lt;!&ndash; 当访问 /helloworld 时，执行 HelloWorldBean 的 doGet 方法 &ndash;&gt;-->
-<!--    <bean id="/helloworld" class="com.test.controller.HelloWorldBean" value="doGet"/>-->
+<!--    <bean id="/helloworld" class="com.test.main.HelloWorldBean" value="doGet"/>-->
 <!--</beans>-->
 
 <components>
-    <component-scan base-package="com.test.controller" />
+    <component-scan base-package="com.test.main" />
 </components>

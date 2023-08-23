@@ -1,4 +1,4 @@
-package com.test.controller;
+package com.test.main;
 
 import java.util.List;
 
