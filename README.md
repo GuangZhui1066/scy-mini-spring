@@ -212,6 +212,15 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
     ActionOne proxyOne = (ActionOne) proxyHelperOne.getProxy();
     String resultOne = proxyOne.doActionOne(msg);
 
-应该实现非侵入性编程。不用在业务逻辑中手动创建代理，而是直接调用用原本的业务接口，把实现类和代理类配置在外面。这样就可以在业务代码中不感知代理对象：
+应该实现非侵入性编程。不用在业务逻辑中手动创建代理，而是直接调用原本的业务接口，把实现类和代理类配置在外面。这样就可以在业务代码中不感知代理对象：
 
+    // 业务代码中直接调用原本的业务接口，不需要感知代理类
     String resultOne = actionOne.doActionOne(msg);
+
+    // 实现类和代理类配置在外面
+    <!-- 实现类，即真实对象 -->
+    <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />
+    <!-- 代理类，其中包含真实对象 -->
+    <bean name="actionOne" class="代理类" >
+        <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
+    </bean>
