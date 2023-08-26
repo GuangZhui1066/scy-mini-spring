@@ -89,4 +89,12 @@
         <property type="String" name="mapperLocations" value="mapper"/>
     </bean>
 
+
+    <!-- actionOne -->
+    <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >
+        <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
+    </bean>
+
+    <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />
+
 </beans>
