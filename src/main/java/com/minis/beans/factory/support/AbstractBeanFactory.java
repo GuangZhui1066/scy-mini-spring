@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
+import com.minis.beans.factory.FactoryBean;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConfigurableBeanFactory;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
@@ -26,7 +27,7 @@ import com.minis.beans.factory.config.ConstructorArgumentValues;
  * 作为抽象类，其提供了 BeanFactory, BeanDefinitionRegistry 等基础接口中 refresh(), getBean() 等方法的默认实现
  * 使得其他的实现类不需要再去实现这些方法
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
     implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
     protected List<String> beanDefinitionNames = new ArrayList<>();
@@ -100,10 +101,30 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
                 applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
         }
-        if (singleton == null) {
-            throw new BeansException("bean is null. beanName: " + beanName);
+        else {
+            System.out.println("bean exist ------- " + beanName + " ------- " + singleton);
+        }
+
+        // 处理 FactoryBean
+        if (singleton instanceof FactoryBean) {
+            System.out.println("factory bean ------- " + beanName + " ------- " + singleton);
+            return this.getObjectForBeanInstance(singleton, beanName);
+        }
+        else {
+            System.out.println("normal bean ------- " + beanName + " ------- " + singleton);
+
         }
         return singleton;
+    }
+
+    protected Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        if (!(beanInstance instanceof FactoryBean)) {
+            return beanInstance;
+        }
+
+        FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
+        Object object = getObjectFromFactoryBean(factory, beanName);
+        return object;
     }
 
     private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
