@@ -21,7 +21,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping, Application
 
     private ApplicationContext applicationContext;
 
-    private final MappingRegistry mappingRegistry = new MappingRegistry();
+    private MappingRegistry mappingRegistry = null;
 
     public RequestMappingHandlerMapping() {
     }
@@ -60,7 +60,10 @@ public class RequestMappingHandlerMapping implements HandlerMapping, Application
 
     @Override
     public HandlerMethod getHandler(HttpServletRequest request) {
-        initMapping();
+        if (this.mappingRegistry == null) {
+            this.mappingRegistry = new MappingRegistry();
+            initMapping();
+        }
 
         String sPath = request.getServletPath();
         if (!this.mappingRegistry.getUrlMappingNames().contains(sPath)) {
