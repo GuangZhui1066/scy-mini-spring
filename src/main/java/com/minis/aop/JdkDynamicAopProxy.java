@@ -26,8 +26,10 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // 事务处理
         System.out.println("JdkDynamicAopProxy. before call real object........");
         Object result = method.invoke(target, args);
+        // 打印日志、统计接口耗时
         System.out.println("JdkDynamicAopProxy. after call real object........");
         return result;
     }
