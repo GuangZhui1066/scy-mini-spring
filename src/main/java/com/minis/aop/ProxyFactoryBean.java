@@ -1,6 +1,7 @@
 package com.minis.aop;
 
 import com.minis.beans.BeanFactoryAware;
+import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.FactoryBean;
 import com.minis.util.ClassUtils;
@@ -21,6 +22,17 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
      * 代理对象
      */
     private Object singletonInstance;
+
+    /**
+     * 通知
+     */
+    private Advisor advisor;
+
+    /**
+     * 拦截器名称
+     * 可以设置不同的拦截器，来实现不同的增强
+     */
+    private String interceptorName;
 
     private BeanFactory beanFactory;
 
@@ -47,6 +59,10 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
         this.target = target;
     }
 
+    public void setInterceptorName(String interceptorName) {
+        this.interceptorName = interceptorName;
+    }
+
     @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
@@ -58,8 +74,22 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
      */
     @Override
     public Object getObject() throws Exception {
+        initializeAdvisor();
         return getSingletonInstance();
     }
+
+    private synchronized void initializeAdvisor() {
+        MethodInterceptor methodInterceptor = null;
+        try {
+            methodInterceptor = (MethodInterceptor) this.beanFactory.getBean(this.interceptorName);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
+
+        advisor = new DefaultAdvisor();
+        advisor.setMethodInterceptor(methodInterceptor);
+    }
+
 
     private synchronized Object getSingletonInstance() {
         if (this.singletonInstance == null) {
@@ -69,7 +99,7 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
     }
 
     protected AopProxy createAopProxy() {
-        return getAopProxyFactory().createAopProxy(target);
+        return getAopProxyFactory().createAopProxy(this.target, this.advisor);
     }
 
     /**
