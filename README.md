@@ -224,3 +224,11 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
     <bean name="actionOne" class="代理类" >
         <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
     </bean>
+
+
+### AOP 中的概念
+1. Join Point：连接点，表示增强逻辑可以插入的地方
+2. Advice：通知，表示在连接点采取的增强操作
+3. Advisor：通知者，其中持有一个 Advice 对象，负责管理 Advice
+4. Interceptor：拦截器，作用是拦截方法的执行，方便插入增强逻辑
+5. Pointcut：切点，定义了 Advice 执行的范围
