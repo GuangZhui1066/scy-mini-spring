@@ -3,5 +3,5 @@ package com.minis.aop;
 /**
  * 后置增强
  */
-public interface AfterAdvice {
+public interface AfterAdvice extends Advice {
 }
