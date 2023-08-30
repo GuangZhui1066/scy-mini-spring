@@ -94,12 +94,14 @@
     <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >
         <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
         <!-- 配置日志增强 -->
-        <property type="String" name="interceptorName" value="loggingInterceptor"/>
+        <property type="String" name="interceptorName" value="loggingBeforeInterceptor"/>
     </bean>
 
     <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />
 
-    <bean name="loggingInterceptor" class="com.test.aop.LoggingInterceptor"/>
+    <bean name="loggingInterceptor" class="com.test.aop.advice.LoggingInterceptor"/>
+
+    <bean name="loggingBeforeInterceptor" class="com.test.aop.advice.LoggingBeforeInterceptor"/>
 
 
 

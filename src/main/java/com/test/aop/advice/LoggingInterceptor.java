@@ -1,4 +1,4 @@
-package com.test.aop;
+package com.test.aop.advice;
 
 import com.minis.aop.MethodInterceptor;
 import com.minis.aop.MethodInvocation;
