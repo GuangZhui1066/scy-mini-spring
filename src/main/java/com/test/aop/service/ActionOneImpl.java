@@ -7,4 +7,9 @@ public class ActionOneImpl implements ActionOne {
        return "Proxy.ActionOneImpl. do action one: " + msg;
     }
 
+    @Override
+    public String doAnotherActionOne(String msg) {
+        return "Proxy.ActionOneImpl. do another action one: " + msg;
+    }
+
 }

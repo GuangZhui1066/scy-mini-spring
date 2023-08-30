@@ -61,4 +61,22 @@ public class AopMainTest {
         }
     }
 
+    /**
+     * 访问：http://localhost:8080/scy_mini_spring_war_exploded/aop/pointcut?msg=scy
+     */
+    @RequestMapping("/aop/pointcut")
+    @ResponseBody
+    public void doTest3(HttpServletRequest request, HttpServletResponse response) {
+        String msg = request.getParameter("msg");
+        String result = actionOne.doAnotherActionOne(msg);
+        if (result == null) {
+            result = "result is null...";
+        }
+        try {
+            response.getWriter().write(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

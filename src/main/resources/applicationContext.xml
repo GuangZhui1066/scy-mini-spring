@@ -94,7 +94,8 @@
     <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >
         <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
         <!-- 配置日志增强 -->
-        <property type="String" name="interceptorName" value="loggingBeforeInterceptor"/>
+        <!-- <property type="String" name="interceptorName" value="loggingBeforeInterceptor"/> -->
+        <property type="String" name="interceptorName" value="advisor"/>
     </bean>
 
     <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />
@@ -103,6 +104,9 @@
 
     <bean name="loggingBeforeInterceptor" class="com.test.aop.advice.LoggingBeforeInterceptor"/>
 
-
+    <bean name="advisor" class="com.minis.aop.support.NameMatchMethodPointcutAdvisor">
+        <property type="com.minis.aop.Advice" name="advice" ref="loggingBeforeInterceptor"/>
+        <property type="String" name="mappedName" value="doAction*"/>
+    </bean>
 
 </beans>
