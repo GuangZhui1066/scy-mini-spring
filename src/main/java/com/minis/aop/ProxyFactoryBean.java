@@ -1,12 +1,14 @@
 package com.minis.aop;
 
+import com.minis.beans.BeanFactoryAware;
+import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.FactoryBean;
 import com.minis.util.ClassUtils;
 
 /**
  * 实现 FactoryBean，表示需要被代理的 bean
  */
-public class ProxyFactoryBean implements FactoryBean<Object> {
+public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
 
     private AopProxyFactory aopProxyFactory;
 
@@ -19,6 +21,8 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
      * 代理对象
      */
     private Object singletonInstance;
+
+    private BeanFactory beanFactory;
 
     private ClassLoader proxyClassLoader = ClassUtils.getDefaultClassLoader();
 
@@ -41,6 +45,11 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
 
     public void setTarget(Object target) {
         this.target = target;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
     }
 
 

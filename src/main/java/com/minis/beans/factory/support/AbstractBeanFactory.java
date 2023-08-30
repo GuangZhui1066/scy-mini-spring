@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.minis.beans.BeanFactoryAware;
 import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
@@ -89,6 +90,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
                 singleton = createBean(beanDefinition);
                 // 把这个bean实例保存到bean的仓库中
                 this.registerBean(beanName, singleton);
+
+                if (singleton instanceof BeanFactoryAware) {
+                    ((BeanFactoryAware) singleton).setBeanFactory(this);
+                }
 
                 // 执行 BeanPostProcessor
                 //   1. 在初始化之前处理 bean
