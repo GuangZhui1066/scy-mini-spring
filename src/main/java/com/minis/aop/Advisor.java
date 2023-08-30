@@ -9,4 +9,6 @@ public interface Advisor {
 
     void setMethodInterceptor(MethodInterceptor methodInterceptor);
 
+    Advice getAdvice();
+
 }
