@@ -232,3 +232,17 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
 3. Advisor：通知者，其中持有一个 Advice 对象，负责管理 Advice
 4. Interceptor：拦截器，作用是拦截方法的执行，方便插入增强逻辑
 5. Pointcut：切点，定义了 Advice 执行的范围
+
+
+### 自动为 bean 创建动态代理
+目前如果想要为某个对象配置增强操作，就需要写一段如下代码，扩展性很差
+
+    <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >
+        <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
+        <property type="String" name="interceptorName" value="advisor"/>
+    </bean>
+    <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />
+
+因此我们需要做到：指定一个规则，并且为符合此规则的所有对象都自动创建代理对象 (ProxyFactoryBean) </br>
+在创建 bean 的过程中，会首先创建毛坯 bean 实例，然后为这个 bean 填充属性，然后为这个 bean 执行 BeanPostProcessor 处理器以及 init 方法 </br>
+所以我们可以实现一个 BeanPostProcessor 处理器 —— BeanNameAutoProxyCreator ，专门为 bean 创建动态代理类 </br>
