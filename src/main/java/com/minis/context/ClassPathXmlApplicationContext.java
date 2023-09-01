@@ -127,6 +127,15 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         }
     }
 
+    /**
+     * 注册所有 BeanPostProcessor
+     *
+     * 注意：
+     *   AutowiredAnnotationBeanPostProcessor 要在 BeanNameAutoProxyCreator 之前注册 (application.xml 中 AutowiredAnnotationBeanPostProcessor 的 bean 配置在前面)
+     *   否则如果在需要被代理的 bean 中使用了 @Autowired (比如 ActionOneImpl 中的 user 属性)，那么这个 @Autowired 的属性就不会被注入。
+     *   因为如果被代理的 bean (actionOne) 先被 BeanNameAutoProxyCreator 处理，那么注入到 BeanFactory 中的 bean 就会被替换为代理对象 ($Proxy)；
+     *   等 AutowiredAnnotationBeanPostProcessor 再处理的时候，无法在代理对象 ($Proxy) 中找到这个需要被注入的属性 (user)
+     */
     @Override
     public void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
         System.out.println("ClassPathXmlApplicationContext try to registerBeanPostProcessors");
