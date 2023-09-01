@@ -97,13 +97,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
 
                 // 执行 BeanPostProcessor
                 //   1. 在初始化之前处理 bean
-                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
                 //   2. 执行初始化方法
                 if (beanDefinition.getInitMethodName() != null && !"".equals(beanDefinition.getInitMethodName())) {
                     invokeInitMethod(beanDefinition, singleton);
                 }
                 //   3. 在初始化之后处理 bean
                 applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+
+                // 用 BeanPostProcessor 处理完 bean 的返回值 (bean的代理对象) 代替原本的 bean 实例
+                this.removeSingleton(beanName);
+                this.registerBean(beanName, singleton);
             }
         }
         else {

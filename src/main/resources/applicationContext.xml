@@ -24,6 +24,8 @@
         <!-- <property name="scyTestService" type="com.test.ioc.ScyTestServiceImpl" ref="scyTestService"/> -->
     </bean>
 
+    <bean name="autowiredAnnotationBeanPostProcessor" class="com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
 
     <!-- HandlerMapping -->
     <bean name="handlerMapping" class="com.minis.web.method.annotation.RequestMappingHandlerMapping"/>
@@ -90,15 +92,15 @@
     </bean>
 
 
-    <!-- actionOne -->
-    <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >
-        <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
-        <!-- 配置日志增强 -->
-        <!-- <property type="String" name="interceptorName" value="loggingBeforeInterceptor"/> -->
-        <property type="String" name="interceptorName" value="advisor"/>
-    </bean>
+<!--    &lt;!&ndash; actionOne &ndash;&gt;-->
+<!--    <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >-->
+<!--        <property type="java.lang.Object" name="target" ref="actionOneImpl"/>-->
+<!--        &lt;!&ndash; 配置日志增强 &ndash;&gt;-->
+<!--        &lt;!&ndash; <property type="String" name="interceptorName" value="loggingBeforeInterceptor"/> &ndash;&gt;-->
+<!--        <property type="String" name="interceptorName" value="advisor"/>-->
+<!--    </bean>-->
 
-    <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />
+<!--    <bean name="actionOneImpl" class="com.test.aop.service.ActionOneImpl" />-->
 
     <bean name="loggingInterceptor" class="com.test.aop.advice.LoggingInterceptor"/>
 
@@ -108,5 +110,13 @@
         <property type="com.minis.aop.Advice" name="advice" ref="loggingBeforeInterceptor"/>
         <property type="String" name="mappedName" value="doAction*"/>
     </bean>
+
+
+    <bean name="autoProxyCreator" class="com.minis.aop.framework.autoproxy.BeanNameAutoProxyCreator" >
+        <property type="String" name="pattern" value="action*" />
+        <property type="String" name="interceptorName" value="advisor" />
+    </bean>
+
+    <bean name="actionOne" class="com.test.aop.service.ActionOneImpl" />
 
 </beans>
