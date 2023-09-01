@@ -1,6 +1,10 @@
 package com.minis.context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.minis.beans.BeansException;
+import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
@@ -24,6 +28,8 @@ import com.minis.core.Resource;
 public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     DefaultListableBeanFactory beanFactory;
+
+    private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
 
     public ClassPathXmlApplicationContext(String fileName) {
@@ -92,12 +98,33 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
 
     /**
-     * bean处理器
+     * 注册 BeanFactoryPostProcessor
      */
-    // todo: modify 参考minis
+    // https://www.baidu.com/s?wd=BeanFactoryPostProcessor
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+        System.out.println("ClassPathXmlApplicationContext try to postProcessBeanFactory");
 
+        String[] beanNamesForType = this.beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class);
+        for (String beanName : beanNamesForType) {
+            System.out.println("ClassPathXmlApplicationContext postProcessBeanFactory : " + beanName);
+            try {
+                Object bean = this.beanFactory.getBean(beanName);
+                if (bean instanceof BeanFactoryPostProcessor) {
+                    this.beanFactoryPostProcessors.add((BeanFactoryPostProcessor) (this.beanFactory.getBean(beanName)));
+                }
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (BeanFactoryPostProcessor processor : this.beanFactoryPostProcessors) {
+            try {
+                processor.postProcessBeanFactory(bf);
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
-package com.minis.aop;
+package com.minis.aop.framework;
 
+import com.minis.aop.PointcutAdvisor;
 import com.minis.beans.BeanFactoryAware;
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;

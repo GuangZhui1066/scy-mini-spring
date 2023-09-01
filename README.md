@@ -237,7 +237,7 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
 ### 自动为 bean 创建动态代理
 目前如果想要为某个对象配置增强操作，就需要写一段如下代码，扩展性很差
 
-    <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >
+    <bean name="actionOne" class="com.minis.aop.framework.ProxyFactoryBean" >
         <property type="java.lang.Object" name="target" ref="actionOneImpl"/>
         <property type="String" name="interceptorName" value="advisor"/>
     </bean>

@@ -1,6 +1,8 @@
-package com.minis.aop;
+package com.minis.aop.framework;
 
 import java.lang.reflect.Method;
+
+import com.minis.aop.MethodInvocation;
 
 /**
  * 通过反射实现方法调用

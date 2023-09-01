@@ -1,4 +1,4 @@
-package com.minis.aop;
+package com.minis.aop.framework;
 
 /**
  * AOP 代理类接口

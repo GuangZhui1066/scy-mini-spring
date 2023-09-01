@@ -1,4 +1,6 @@
-package com.minis.aop;
+package com.minis.aop.framework;
+
+import com.minis.aop.PointcutAdvisor;
 
 /**
  * 默认的 AOP 工厂类

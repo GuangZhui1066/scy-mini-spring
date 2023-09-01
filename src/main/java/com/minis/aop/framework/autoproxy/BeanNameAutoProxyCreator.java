@@ -1,9 +1,9 @@
 package com.minis.aop.framework.autoproxy;
 
-import com.minis.aop.AopProxyFactory;
-import com.minis.aop.DefaultAopProxyFactory;
 import com.minis.aop.PointcutAdvisor;
-import com.minis.aop.ProxyFactoryBean;
+import com.minis.aop.framework.AopProxyFactory;
+import com.minis.aop.framework.DefaultAopProxyFactory;
+import com.minis.aop.framework.ProxyFactoryBean;
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.config.BeanPostProcessor;

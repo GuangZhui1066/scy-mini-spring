@@ -3,13 +3,13 @@ package com.minis.aop.support;
 import com.minis.aop.Advice;
 import com.minis.aop.AfterAdvice;
 import com.minis.aop.AfterReturningAdvice;
-import com.minis.aop.AfterReturningAdviceInterceptor;
 import com.minis.aop.BeforeAdvice;
 import com.minis.aop.MethodBeforeAdvice;
-import com.minis.aop.MethodBeforeAdviceInterceptor;
 import com.minis.aop.MethodInterceptor;
 import com.minis.aop.Pointcut;
 import com.minis.aop.PointcutAdvisor;
+import com.minis.aop.framework.adapter.AfterReturningAdviceInterceptor;
+import com.minis.aop.framework.adapter.MethodBeforeAdviceInterceptor;
 
 /**
  * 带有切点的通知者
