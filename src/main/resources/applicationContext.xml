@@ -93,7 +93,7 @@
 
 
 <!--    &lt;!&ndash; actionOne &ndash;&gt;-->
-<!--    <bean name="actionOne" class="com.minis.aop.ProxyFactoryBean" >-->
+<!--    <bean name="actionOne" class="com.minis.aop.framework.ProxyFactoryBean" >-->
 <!--        <property type="java.lang.Object" name="target" ref="actionOneImpl"/>-->
 <!--        &lt;!&ndash; 配置日志增强 &ndash;&gt;-->
 <!--        &lt;!&ndash; <property type="String" name="interceptorName" value="loggingBeforeInterceptor"/> &ndash;&gt;-->
@@ -107,7 +107,7 @@
     <bean name="loggingBeforeInterceptor" class="com.test.aop.advice.LoggingBeforeInterceptor"/>
 
     <bean name="advisor" class="com.minis.aop.support.NameMatchMethodPointcutAdvisor">
-        <property type="com.minis.aop.Advice" name="advice" ref="loggingBeforeInterceptor"/>
+        <property type="com.minis.aop.Advice" name="advice" ref="transactionInterceptor"/>
         <property type="String" name="mappedName" value="doAction*"/>
     </bean>
 
@@ -118,5 +118,11 @@
     </bean>
 
     <bean name="actionOne" class="com.test.aop.service.ActionOneImpl" />
+
+    <bean name="transactionInterceptor" class="com.test.aop.advice.TransactionInterceptor" >
+        <property type="com.test.aop.advice.TransactionManager" name="transactionManager" ref="transactionManager" />
+    </bean>
+
+    <bean name="transactionManager" class="com.test.aop.advice.TransactionManager" />
 
 </beans>
