@@ -246,3 +246,11 @@ AOP (Aspect Orient Programming), 面向切面编程. </br>
 因此我们需要做到：指定一个规则，并且为符合此规则的所有对象都自动创建代理对象 (ProxyFactoryBean) </br>
 在创建 bean 的过程中，会首先创建毛坯 bean 实例，然后为这个 bean 填充属性，然后为这个 bean 执行 BeanPostProcessor 处理器以及 init 方法 </br>
 所以我们可以实现一个 BeanPostProcessor 处理器 —— BeanNameAutoProxyCreator ，专门为 bean 创建动态代理类 </br>
+
+
+### AOP 总结
+Spring AOP 是 Spring 框架的一个核心组件之一。面向对象和面向切面，两者一纵一横。 </br>
+在 AOP 编程中，Aspect 指的是横切逻辑，就是和基本业务逻辑无关，但却是很多不同业务代码共同需要的功能，比如日志记录、安全检查、事务管理，等等。 </br>
+AOP 强调的是将横切逻辑作为一个独立的属性进行处理，而不是直接嵌入到基本业务逻辑中。这样可以提高代码的可复用性、可维护性和可扩展性。 </br>
+AOP 基于 JDK 动态代理的实现，虽然很容易实现，但是效率不高，限制也比较多。
+
