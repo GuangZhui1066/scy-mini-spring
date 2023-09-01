@@ -32,13 +32,12 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
         Class<?> targetClass = target == null ? null : target.getClass();
 
         // 不匹配切点规则，不执行方法和增强
-        // todo: 不匹配切点规则，方法和增强都不执行？还是执行方法本身但不执行增强
         if (!this.advisor.getPointcut().getMethodMatcher().matches(method, targetClass)) {
             return null;
         }
 
         // 创建方法调用的实例
-        ReflectiveMethodInvocation methodInvocation = new ReflectiveMethodInvocation(target, method, args);
+        ReflectiveMethodInvocation methodInvocation = new ReflectiveMethodInvocation(proxy, target, method, args);
         // 通过通知者获取到通知 (拦截器)
         MethodInterceptor methodInterceptor = this.advisor.getMethodInterceptor();
         // 用拦截器，执行方法调用以及增强操作

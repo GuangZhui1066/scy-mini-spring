@@ -25,9 +25,12 @@ public class DynamicProxyHelper {
                 new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        // 前置增强
                         System.out.println("DynamicProxyHelper. before call real object........");
+                        // 对真实对象进行方法调用（执行原本的代码逻辑）
                         Object result = method.invoke(subject, args);
-                        System.out.println("DynamicProxyHelper. after call real object........");
+                        // 后置增强
+                        System.out.println("DynamicProxyHelper. after call real object. result : " + result + "........");
                         return result;
                     }
                 }

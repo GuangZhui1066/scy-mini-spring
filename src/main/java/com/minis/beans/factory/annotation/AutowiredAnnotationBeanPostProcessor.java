@@ -31,7 +31,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
                     try {
                         field.setAccessible(true);
                         field.set(bean, autowiredObj);
-                        System.out.println("autowire " + fieldName + " for bean " + beanName);
+                        System.out.println("autowire " + fieldName + " for bean " + beanName + " : " + autowiredObj + " class : " + autowiredObj.getClass());
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -43,7 +43,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return null;
+        return bean;
     }
 
     public BeanFactory getBeanFactory() {

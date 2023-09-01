@@ -8,6 +8,11 @@ import java.lang.reflect.Method;
 public class ReflectiveMethodInvocation implements MethodInvocation {
 
     /**
+     * 代理对象
+     */
+    protected final Object proxy;
+
+    /**
      * 方法所属的对象
      */
     protected final Object target;
@@ -22,7 +27,8 @@ public class ReflectiveMethodInvocation implements MethodInvocation {
      */
     protected Object[] arguments;
 
-    protected ReflectiveMethodInvocation(Object target, Method method,  Object[] arguments) {
+    protected ReflectiveMethodInvocation(Object proxy, Object target, Method method, Object[] arguments) {
+        this.proxy = proxy;
         this.target = target;
         this.method = method;
         this.arguments = arguments;
@@ -31,6 +37,7 @@ public class ReflectiveMethodInvocation implements MethodInvocation {
 
     @Override
     public Object proceed() throws Throwable {
+        // 这里是对真实对象进行方法调用（执行原本的代码逻辑），增强逻辑在外层进行
         return this.method.invoke(this.target, this.arguments);
     }
 
