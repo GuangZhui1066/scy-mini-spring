@@ -39,7 +39,6 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         Resource resource = new ClassPathXmlResource(fileName);
         DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
-        //defaultListableBeanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(defaultListableBeanFactory);
         reader.loadBeanDefinitions(resource);
         this.beanFactory = defaultListableBeanFactory;
@@ -100,7 +99,6 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     /**
      * 注册 BeanFactoryPostProcessor
      */
-    // https://www.baidu.com/s?wd=BeanFactoryPostProcessor
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
         System.out.println("ClassPathXmlApplicationContext try to postProcessBeanFactory");
@@ -118,6 +116,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
             }
         }
 
+        // 执行 BeanFactoryPostProcessor，处理 BeanDefinition
         for (BeanFactoryPostProcessor processor : this.beanFactoryPostProcessors) {
             try {
                 processor.postProcessBeanFactory(bf);
@@ -135,6 +134,8 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
      *   否则如果在需要被代理的 bean 中使用了 @Autowired (比如 ActionOneImpl 中的 user 属性)，那么这个 @Autowired 的属性就不会被注入。
      *   因为如果被代理的 bean (actionOne) 先被 BeanNameAutoProxyCreator 处理，那么注入到 BeanFactory 中的 bean 就会被替换为代理对象 ($Proxy)；
      *   等 AutowiredAnnotationBeanPostProcessor 再处理的时候，无法在代理对象 ($Proxy) 中找到这个需要被注入的属性 (user)
+     *
+     *   可以用 BeanPostProcessor 的 order 属性控制加载顺序
      */
     @Override
     public void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {

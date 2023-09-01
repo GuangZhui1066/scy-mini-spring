@@ -33,6 +33,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
      */
     @Override
     public void refresh() throws BeansException, IllegalStateException {
+        // 注册并执行 BeanFactoryPostProcessor
         postProcessBeanFactory(this.getBeanFactory());
         // 注册 Bean后置处理器
         registerBeanPostProcessors(this.getBeanFactory());
@@ -106,7 +107,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     public Boolean containsBean(String name) {
         return getBeanFactory().containsBean(name);
     }
-
     //	public void registerBean(String beanName, Object obj) {
     //		getBeanFactory().registerBean(beanName, obj);
     //	}

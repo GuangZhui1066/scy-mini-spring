@@ -26,6 +26,8 @@
 
     <bean name="autowiredAnnotationBeanPostProcessor" class="com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 
+    <bean name="myBeanFactoryPostProcessor" class="com.test.ioc.processor.MyBeanFactoryPostProcessor" />
+
 
     <!-- HandlerMapping -->
     <bean name="handlerMapping" class="com.minis.web.method.annotation.RequestMappingHandlerMapping"/>
