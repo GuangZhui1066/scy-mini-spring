@@ -115,8 +115,17 @@ public class AnnotationConfigWebApplicationContext
      */
     @Override
     public void registerListeners() {
-        ApplicationListener listener = new ApplicationListener();
-        this.getApplicationEventPublisher().addApplicationListener(listener);
+        String[] beanNamesForType = this.beanFactory.getBeanNamesForType(ApplicationListener.class);
+        for (String beanName : beanNamesForType) {
+            try {
+                Object bean = this.beanFactory.getBean(beanName);
+                if (bean instanceof ApplicationListener) {
+                    this.getApplicationEventPublisher().addApplicationListener((ApplicationListener) bean);
+                }
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -145,7 +154,7 @@ public class AnnotationConfigWebApplicationContext
 
     @Override
     public void finishRefresh() {
-        publishEvent(new ContextRefreshEvent("AnnotationConfigWebApplicationContext Refreshed..."));
+        publishEvent(new ContextRefreshEvent(this));
     }
 
     @Override

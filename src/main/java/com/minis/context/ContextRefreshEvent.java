@@ -1,8 +1,11 @@
 package com.minis.context;
 
-public class ContextRefreshEvent extends ApplicationEvent {
+/**
+ * 事件：上下文刷新完成
+ */
+public class ContextRefreshEvent extends ApplicationContextEvent {
 
-    public ContextRefreshEvent(Object event) {
+    public ContextRefreshEvent(ApplicationContext event) {
         super(event);
     }
 

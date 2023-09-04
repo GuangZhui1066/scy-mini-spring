@@ -5,7 +5,7 @@ import java.util.EventObject;
 /**
  * 事件
  */
-public class ApplicationEvent extends EventObject {
+public abstract class ApplicationEvent extends EventObject {
 
     protected String msg = null;
 

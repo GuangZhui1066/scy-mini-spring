@@ -28,6 +28,8 @@
 
     <bean name="myBeanFactoryPostProcessor" class="com.test.ioc.processor.MyBeanFactoryPostProcessor" />
 
+    <bean name="myContextRefreshListener" class="com.test.ioc.listener.MyContextRefreshListener" />
+
 
     <!-- HandlerMapping -->
     <bean name="handlerMapping" class="com.minis.web.method.annotation.RequestMappingHandlerMapping"/>

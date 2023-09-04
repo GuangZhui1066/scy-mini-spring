@@ -3,12 +3,12 @@ package com.test.main;
 import java.util.Map;
 
 import com.minis.beans.BeansException;
-import com.minis.context.ApplicationListener;
 import com.minis.context.ClassPathXmlApplicationContext;
 import com.minis.context.ContextRefreshEvent;
 import com.test.ioc.ScyBaseService;
 import com.test.ioc.ScyCircleService;
 import com.test.ioc.ScyTestServiceImpl;
+import com.test.ioc.listener.MyContextRefreshListener;
 
 public class SpringTest {
 
@@ -57,10 +57,10 @@ public class SpringTest {
         /**
          * 测试事件机制
          */
-        ApplicationListener applicationListener = new ApplicationListener();
+        MyContextRefreshListener myContextRefreshListener = new MyContextRefreshListener();
         // ClassPathXmlApplicationContext 在执行 refresh() 方法时，已经注册过一个事件监听器，这里再注册第二个监听器
-        context.addApplicationListener(applicationListener);
-        context.publishEvent(new ContextRefreshEvent("scy test event"));
+        context.addApplicationListener(myContextRefreshListener);
+        context.publishEvent(new ContextRefreshEvent(context));
 
 
         /**
