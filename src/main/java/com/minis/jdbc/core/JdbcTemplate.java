@@ -129,7 +129,7 @@ public class JdbcTemplate {
     }
 
     /**
-     * 更新
+     * 更新：可以执行 insert update delete 这些写操作
      */
     public int update(String sql, Object[] args) {
         Connection con = null;

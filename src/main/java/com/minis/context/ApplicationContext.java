@@ -10,6 +10,7 @@ import com.minis.core.env.EnvironmentCapable;
 
 /**
  * 上下文公共接口，所有的上下文都要实现 ApplicationContext
+ * 是一个集成者，扩展了 BeanFactory 的功能
  *
  * 作用:
  *   支持上下文

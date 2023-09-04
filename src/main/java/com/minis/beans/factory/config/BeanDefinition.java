@@ -6,6 +6,7 @@ public class BeanDefinition {
 
     /**
      * 单例模式
+     * 单例是指在一个 Context(上下文) 范围内只有一个实例，不一定是整个系统中只有一个实例
      */
     String SCOPE_SINGLETON = "singleton";
 
