@@ -33,6 +33,13 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
      */
     @Override
     public void refresh() throws BeansException, IllegalStateException {
+        /**
+         * 在这里添加 ApplicationContextAwareProcessor 的话会有问题：
+         *   在加载 requestMapping 这个bean时，为其设置的 applicationContext 会是子级上下文
+         *   后面执行 initMapping 时，从子级上下文中拿不到 controller 的定义（应该要从父级上下文中取controller）
+         */
+        //prepareBeanFactory(this.getBeanFactory());
+
         // 注册并执行 BeanFactoryPostProcessor
         postProcessBeanFactory(this.getBeanFactory());
         // 注册 Bean后置处理器
@@ -54,6 +61,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     public abstract void onRefresh();
     public abstract void finishRefresh();
 
+    protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+    }
 
     /**
      * 环境
