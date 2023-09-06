@@ -1,9 +1,12 @@
-package com.minis.context;
+package com.minis.context.support;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.Aware;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.config.BeanPostProcessor;
+import com.minis.context.ApplicationContext;
+import com.minis.context.ApplicationContextAware;
+import com.minis.context.EnvironmentAware;
 
 /**
  * 处理 ApplicationContextAware

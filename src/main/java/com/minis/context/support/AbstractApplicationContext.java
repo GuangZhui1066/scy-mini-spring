@@ -1,4 +1,4 @@
-package com.minis.context;
+package com.minis.context.support;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,9 @@ import com.minis.beans.BeansException;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
+import com.minis.context.ApplicationContext;
+import com.minis.context.ApplicationContextAware;
+import com.minis.context.ApplicationEventPublisher;
 import com.minis.core.env.Environment;
 
 /**

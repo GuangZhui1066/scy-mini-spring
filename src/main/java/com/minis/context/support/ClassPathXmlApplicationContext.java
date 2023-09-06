@@ -1,4 +1,4 @@
-package com.minis.context;
+package com.minis.context.support;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,11 @@ import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
+import com.minis.context.ApplicationEvent;
+import com.minis.context.ApplicationEventPublisher;
+import com.minis.context.ApplicationListener;
+import com.minis.context.event.ContextRefreshedEvent;
+import com.minis.context.event.SimpleApplicationEventPublisher;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
 
@@ -59,7 +64,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     @Override
     public void finishRefresh() {
-        publishEvent(new ContextRefreshEvent(this));
+        publishEvent(new ContextRefreshedEvent(this));
     }
 
 

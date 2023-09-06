@@ -13,12 +13,12 @@ import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
-import com.minis.context.AbstractApplicationContext;
 import com.minis.context.ApplicationEvent;
 import com.minis.context.ApplicationEventPublisher;
 import com.minis.context.ApplicationListener;
-import com.minis.context.ContextRefreshEvent;
-import com.minis.context.SimpleApplicationEventPublisher;
+import com.minis.context.event.ContextRefreshedEvent;
+import com.minis.context.event.SimpleApplicationEventPublisher;
+import com.minis.context.support.AbstractApplicationContext;
 import com.minis.web.context.WebApplicationContext;
 
 /**
@@ -154,7 +154,7 @@ public class AnnotationConfigWebApplicationContext
 
     @Override
     public void finishRefresh() {
-        publishEvent(new ContextRefreshEvent(this));
+        publishEvent(new ContextRefreshedEvent(this));
     }
 
     @Override
