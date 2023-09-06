@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.minis.beans.BeanFactoryAware;
 import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
+import com.minis.beans.factory.Aware;
+import com.minis.beans.factory.BeanFactoryAware;
+import com.minis.beans.factory.BeanNameAware;
 import com.minis.beans.factory.FactoryBean;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConfigurableBeanFactory;
@@ -91,9 +93,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
                 // 把这个bean实例保存到bean的仓库中
                 this.registerBean(beanName, singleton);
 
-                if (singleton instanceof BeanFactoryAware) {
-                    ((BeanFactoryAware) singleton).setBeanFactory(this);
-                }
+                // 处理 Aware 接口
+                invokeAwareMethods(beanName, singleton);
 
                 // 执行 BeanPostProcessor
                 //   1. 在初始化之前处理 bean
@@ -124,6 +125,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
 
         }
         return singleton;
+    }
+
+    private void invokeAwareMethods(final String beanName, final Object bean) {
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+        }
     }
 
     protected Object getObjectForBeanInstance(Object beanInstance, String beanName) {
