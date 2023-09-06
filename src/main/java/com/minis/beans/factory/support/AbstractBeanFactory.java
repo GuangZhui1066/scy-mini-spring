@@ -16,10 +16,12 @@ import com.minis.beans.factory.Aware;
 import com.minis.beans.factory.BeanFactoryAware;
 import com.minis.beans.factory.BeanNameAware;
 import com.minis.beans.factory.FactoryBean;
+import com.minis.beans.factory.InitializingBean;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConfigurableBeanFactory;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
+import com.minis.util.ReflectionUtils;
 
 /**
  * BeanFactory 的抽象实现类
@@ -100,8 +102,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
                 //   1. 在初始化之前处理 bean
                 singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
                 //   2. 执行初始化方法
-                if (beanDefinition.getInitMethodName() != null && !"".equals(beanDefinition.getInitMethodName())) {
-                    invokeInitMethod(beanDefinition, singleton);
+                try {
+                    invokeInitMethods(beanDefinition, singleton);
+                } catch (Throwable e) {
+                    throw new BeansException("Invocation of init method failed: " + beanName + ", e: " + e);
                 }
                 //   3. 在初始化之后处理 bean
                 applyBeanPostProcessorsAfterInitialization(singleton, beanName);
@@ -148,20 +152,30 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
         return object;
     }
 
-    private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
-        Class<?> clazz = obj.getClass();
-        Method method;
+    private void invokeInitMethods(BeanDefinition beanDefinition, final Object bean) throws Throwable {
+        boolean isInitializingBean = (bean instanceof InitializingBean);
+        if (isInitializingBean) {
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
+
         try {
-            method = clazz.getMethod(beanDefinition.getInitMethodName());
-            method.invoke(obj);
+            if (beanDefinition.getInitMethodName() != null && !"".equals(beanDefinition.getInitMethodName())) {
+                invokeCustomInitMethod(beanDefinition, bean);
+            }
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * 依赖注入(由框架而不是使用者来创建bean) 的原理是反射
-     */
+    protected void invokeCustomInitMethod(BeanDefinition beanDefinition, final Object bean) throws Throwable {
+        Method initMethod = bean.getClass().getMethod(beanDefinition.getInitMethodName());
+        ReflectionUtils.makeAccessible(initMethod);
+        initMethod.invoke(bean);
+    }
+
+        /**
+         * 依赖注入(由框架而不是使用者来创建bean) 的原理是反射
+         */
     private Object createBean(BeanDefinition beanDefinition) {
         Class<?> clazz = null;
         // 使用构造器创建毛坯bean
