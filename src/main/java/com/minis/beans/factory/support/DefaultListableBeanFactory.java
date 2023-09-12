@@ -14,9 +14,23 @@ import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
  * IoC 引擎
  */
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-    implements ConfigurableListableBeanFactory {
+    implements ConfigurableListableBeanFactory, BeanDefinitionRegistry {
 
     ConfigurableListableBeanFactory parentBeanFctory;
+
+    public void setParent(ConfigurableListableBeanFactory beanFactory) {
+        this.parentBeanFctory = beanFactory;
+    }
+
+
+    @Override
+    public Object getBean(String beanName) throws BeansException{
+        Object result = super.getBean(beanName);
+        if (result == null) {
+            result = this.parentBeanFctory.getBean(beanName);
+        }
+        return result;
+    }
 
     @Override
     public int getBeanDefinitionCount() {
@@ -32,12 +46,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public String[] getBeanNamesForType(Class<?> type) {
         List<String> result = new ArrayList<>();
         for (String beanName : this.beanDefinitionNames) {
-            BeanDefinition beanDefinition = this.getBeanDefinition(beanName);
             Class<?> classToMatch = null;
             try {
+                BeanDefinition beanDefinition = this.getBeanDefinition(beanName);
                 classToMatch = Class.forName(beanDefinition.getClassName());
-            } catch (ClassNotFoundException e1) {
-                e1.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             if (type.isAssignableFrom(classToMatch)) {
                 result.add(beanName);
@@ -57,17 +71,34 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return result;
     }
 
-    public void setParent(ConfigurableListableBeanFactory beanFactory) {
-        this.parentBeanFctory = beanFactory;
+    @Override
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+        this.beanDefinitionNames.add(beanName);
+        this.beanDefinitionMap.put(beanName, beanDefinition);
+        if (!beanDefinition.isLazyInit()) {
+            try {
+                getBean(beanName);
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
-    public Object getBean(String beanName) throws BeansException{
-        Object result = super.getBean(beanName);
-        if (result == null) {
-            result = this.parentBeanFctory.getBean(beanName);
-        }
-        return result;
+    public void removeBeanDefinition(String beanName) {
+        beanDefinitionNames.remove(beanName);
+        beanDefinitionMap.remove(beanName);
+        this.removeSingleton(beanName);
+    }
+
+    @Override
+    public BeanDefinition getBeanDefinition(String beanName) {
+        return beanDefinitionMap.get(beanName);
+    }
+
+    @Override
+    public boolean containsBeanDefinition(String beanName) {
+        return this.beanDefinitionMap.containsKey(beanName);
     }
 
 }

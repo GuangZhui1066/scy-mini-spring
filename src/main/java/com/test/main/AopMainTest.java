@@ -28,10 +28,10 @@ public class AopMainTest {
     public void doTest1(HttpServletRequest request, HttpServletResponse response) {
         String msg = request.getParameter("msg");
 
-        ActionOne actionOne = new ActionOneImpl();
-        DynamicProxyHelper proxyHelperOne = new DynamicProxyHelper(actionOne);
-        ActionOne proxyOne = (ActionOne) proxyHelperOne.getProxy();
-        String resultOne = proxyOne.doActionOne(msg);
+        //ActionOne actionOne = new ActionOneImpl();
+        //DynamicProxyHelper proxyHelperOne = new DynamicProxyHelper(actionOne);
+        //ActionOne proxyOne = (ActionOne) proxyHelperOne.getProxy();
+        //String resultOne = proxyOne.doActionOne(msg);
 
         ActionTwo actionTwo = new ActionTwoImpl();
         DynamicProxyHelper proxyHelperTwo = new DynamicProxyHelper(actionTwo);
@@ -39,7 +39,8 @@ public class AopMainTest {
         String resultTwo = proxyTwo.doActionTwo(msg);
 
         try {
-            String result = "one: " + resultOne + "\n" + "two: " + resultTwo;
+            //String result = "one: " + resultOne + "\n" + "two: " + resultTwo;
+            String result = "two: " + resultTwo;
             response.getWriter().write(result);
         } catch (IOException e) {
             e.printStackTrace();

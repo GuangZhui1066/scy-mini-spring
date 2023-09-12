@@ -8,7 +8,7 @@ import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
-import com.minis.beans.factory.support.AbstractBeanFactory;
+import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.core.Resource;
 import org.dom4j.Element;
 
@@ -17,9 +17,9 @@ import org.dom4j.Element;
  */
 public class XmlBeanDefinitionReader {
 
-    AbstractBeanFactory beanFactory;
+    DefaultListableBeanFactory beanFactory;
 
-    public XmlBeanDefinitionReader(AbstractBeanFactory beanFactory) {
+    public XmlBeanDefinitionReader(DefaultListableBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 

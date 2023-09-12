@@ -1,6 +1,7 @@
 package com.minis.beans.factory.support;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,14 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     protected List<String> beanNames = new ArrayList<>();
 
-    protected Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+    private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(256);
+
+    /**
+     * 二级缓存
+     *   存放已经用构造器(有参构造器或无参构造器)实例化、但是有部分属性没有被赋值的 bean
+     */
+    private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
+
 
     /**
      * 保存 Bean 的包含关系：key 是 Bean 的名称，value 是 Bean 里面包含的其它 Bean 的名称集合
@@ -50,7 +58,18 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     @Override
     public Object getSingleton(String beanName) {
-        return this.singletonObjects.get(beanName);
+        Object singletonObject = singletonObjects.get(beanName);
+
+        if (singletonObject == null) {
+            // 此时这个 bean 还没有实例化完成 (没有实例化对象 / 有实例化对象但是其所有属性没有被全部赋值)
+            // 从二级缓存中获取没有完全实例化的毛坯 bean
+            singletonObject = earlySingletonObjects.get(beanName);
+        }
+        return singletonObject;
+    }
+
+    protected void addEarlySingletonObject(String beanName, Object bean) {
+        earlySingletonObjects.put(beanName, bean);
     }
 
     @Override
