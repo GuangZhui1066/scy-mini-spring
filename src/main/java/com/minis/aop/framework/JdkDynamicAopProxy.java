@@ -36,7 +36,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
 
         // 不匹配切点规则，不执行方法和增强
         if (!this.advisor.getPointcut().getMethodMatcher().matches(method, targetClass)) {
-            return null;
+            return method.invoke(target, args);
         }
 
         // 创建方法调用的实例

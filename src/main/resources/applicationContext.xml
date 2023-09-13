@@ -112,11 +112,13 @@
 
     <bean name="advisor" class="com.minis.aop.support.NameMatchMethodPointcutAdvisor">
         <property type="com.minis.aop.Advice" name="advice" ref="transactionInterceptor"/>
+        <!-- 拦截以 doAction 开头的方法 -->
         <property type="String" name="mappedName" value="doAction*"/>
     </bean>
 
 
     <bean name="autoProxyCreator" class="com.minis.aop.framework.autoproxy.BeanNameAutoProxyCreator" >
+        <!-- 代理所有名字以 action 开头的 bean -->
         <property type="String" name="pattern" value="action*" />
         <property type="String" name="interceptorName" value="advisor" />
     </bean>

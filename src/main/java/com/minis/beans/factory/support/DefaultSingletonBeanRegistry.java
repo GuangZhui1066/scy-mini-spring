@@ -17,6 +17,10 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     protected List<String> beanNames = new ArrayList<>();
 
+    /**
+     * 一级缓存
+     *   存放已经构建完成的 bean（如果是被代理的 bean，就存放代理对象）
+     */
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(256);
 
     /**
