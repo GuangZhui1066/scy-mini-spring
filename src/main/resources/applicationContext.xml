@@ -131,4 +131,9 @@
 
     <bean name="transactionManager" class="com.test.aop.advice.TransactionManager" />
 
+
+    <bean name="actionP" class="com.test.ioc.threeLevelCache.ActionPImpl" />
+
+    <bean name="ectionQ" class="com.test.ioc.threeLevelCache.EctionQ" />
+
 </beans>

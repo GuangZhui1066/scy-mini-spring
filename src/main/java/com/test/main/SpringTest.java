@@ -9,6 +9,8 @@ import com.test.ioc.ScyBaseService;
 import com.test.ioc.ScyCircleService;
 import com.test.ioc.ScyTestServiceImpl;
 import com.test.ioc.listener.MyContextRefreshListener;
+import com.test.ioc.threeLevelCache.ActionP;
+import com.test.ioc.threeLevelCache.EctionQ;
 
 public class SpringTest {
 
@@ -69,6 +71,21 @@ public class SpringTest {
         //context.setEnvironment();
         //context.getApplicationName();
         //context.getEnvironment();
+
+
+        /**
+         * 二级缓存不能解决有代理对象时的循环依赖问题
+         *   actionP 和 ectionQ 循环依赖，其中 actionP 被代理
+         *   当bean被加载完以后，上下文中的 actionP 是代理对象，但 ectionQ 中包含的 actionP 是真实对象
+         *   所以会导致 actionP != ectionQ.getActionP()
+         *
+         *   这是因为在创建 actionP 时，会先将 actionP 的真实对象放入二级缓存，然后在为其填充 ectionQ 属性时，会去创建 ectionQ，
+         *   创建 ectionQ 的过程中，会为 ectionQ 填充其 actionP 属性，这时会从二级缓存中拿出 actionP 的真实对象来为 ectionQ 的属性赋值
+         */
+        ActionP actionP = (ActionP) context.getBean("actionP");
+        EctionQ ectionQ = (EctionQ) context.getBean("ectionQ");
+        ActionP actionPInQ = ectionQ.getActionP();
+        System.out.println(actionP == actionPInQ);
 
     }
 
