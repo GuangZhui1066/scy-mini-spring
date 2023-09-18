@@ -2,7 +2,6 @@ package com.minis.context.support;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.Aware;
-import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.context.ApplicationContext;
 import com.minis.context.ApplicationContextAware;
@@ -20,9 +19,6 @@ public class ApplicationContextAwareProcessor implements BeanPostProcessor {
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) {
-    }
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -45,4 +41,5 @@ public class ApplicationContextAwareProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
     }
+
 }

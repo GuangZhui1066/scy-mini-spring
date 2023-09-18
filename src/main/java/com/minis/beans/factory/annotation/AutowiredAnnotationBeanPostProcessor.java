@@ -5,14 +5,27 @@ import java.lang.reflect.Field;
 import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.BeanFactoryAware;
+import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 
 /**
  * bean处理器，处理具有部分属性被 @Autowired 修饰的 bean
  */
-public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationAwareBeanPostProcessor {
+public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware {
 
-    private BeanFactory beanFactory;
+    private ConfigurableListableBeanFactory beanFactory;
+
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
+    }
+
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -45,15 +58,6 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
-    }
-
-    public BeanFactory getBeanFactory() {
-        return beanFactory;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
     }
 
     @Override
