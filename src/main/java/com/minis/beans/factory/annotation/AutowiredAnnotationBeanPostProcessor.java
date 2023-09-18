@@ -3,13 +3,14 @@ package com.minis.beans.factory.annotation;
 import java.lang.reflect.Field;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
-import com.minis.beans.factory.config.BeanPostProcessor;
+import com.minis.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
 
 /**
  * bean处理器，处理具有部分属性被 @Autowired 修饰的 bean
  */
-public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationAwareBeanPostProcessor {
 
     private BeanFactory beanFactory;
 
@@ -53,6 +54,27 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
     @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName)
+        throws BeansException {
+        return pvs;
+    }
+
+    @Override
+    public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException {
+        return bean;
     }
 
 }

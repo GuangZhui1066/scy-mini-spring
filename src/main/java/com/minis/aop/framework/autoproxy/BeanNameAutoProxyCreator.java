@@ -5,21 +5,17 @@ import com.minis.aop.framework.AopProxyFactory;
 import com.minis.aop.framework.DefaultAopProxyFactory;
 import com.minis.aop.framework.ProxyFactoryBean;
 import com.minis.beans.BeansException;
-import com.minis.beans.factory.BeanFactory;
-import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.util.PatternMatchUtils;
 
 /**
  * Bean 处理器：为名称能够匹配特定表达式的 bean 自动创建代理类
  */
-public class BeanNameAutoProxyCreator implements BeanPostProcessor {
+public class BeanNameAutoProxyCreator extends AbstractAutoProxyCreator {
 
     /**
      * bean 名的匹配表达式
      */
     private String pattern;
-
-    private BeanFactory beanFactory;
 
     private AopProxyFactory aopProxyFactory;
 
@@ -39,35 +35,29 @@ public class BeanNameAutoProxyCreator implements BeanPostProcessor {
         this.interceptorName = interceptorName;
     }
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
-    }
 
     /**
      * 核心方法：为 bean 创建代理对象，并返回这个代理对象
-     * 在 bean 实例化之后、init 方法调用之前执行
      */
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    protected Object createProxy(Object bean, String beanName) {
         System.out.println("BeanNameAutoProxyCreator. try to create proxy for : " + beanName);
         if (isMatch(beanName, this.pattern)) {
             System.out.println(beanName + "BeanNameAutoProxyCreator. bean name matched, create proxy for " + bean);
             // 创建一个 ProxyFactoryBean
             ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
             proxyFactoryBean.setTarget(bean);
-            proxyFactoryBean.setBeanFactory(beanFactory);
+            proxyFactoryBean.setBeanFactory(getBeanFactory());
             proxyFactoryBean.setAopProxyFactory(aopProxyFactory);
             proxyFactoryBean.setInterceptorName(interceptorName);
-            return proxyFactoryBean;
+            try {
+                return proxyFactoryBean.getObject();
+            } catch (Exception e) {
+                throw new BeansException("FactoryBean threw exception on object[" + beanName + "] creation, e: " + e);
+            }
         } else {
             return bean;
         }
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
     }
 
     protected boolean isMatch(String beanName, String mappedName) {

@@ -14,7 +14,7 @@ public interface BeanPostProcessor {
     void setBeanFactory(BeanFactory beanFactory);
 
     /**
-     * 在 bean 被初始化之前处理 bean
+     * 在 bean 被初始化之前处理 bean (此时 bean 的属性值已经被赋值)
      */
     Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException;
 
