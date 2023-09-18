@@ -114,7 +114,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             return;
         }
 
-        // 处理 bean 的属性值
+        // 处理 bean 的属性值 (注入 @Autowire 的属性)
         for (BeanPostProcessor bp : getBeanPostProcessors()) {
             if (bp instanceof InstantiationAwareBeanPostProcessor) {
                 InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;

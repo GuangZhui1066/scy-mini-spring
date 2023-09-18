@@ -29,7 +29,27 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        Object result = bean;
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName)
+        throws BeansException {
         Class<?> clazz = bean.getClass();
         Field[] fields = clazz.getDeclaredFields();
         if (fields != null) {
@@ -52,27 +72,6 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
                 }
             }
         }
-        return result;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-        return null;
-    }
-
-    @Override
-    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
-        return true;
-    }
-
-    @Override
-    public PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName)
-        throws BeansException {
         return pvs;
     }
 
