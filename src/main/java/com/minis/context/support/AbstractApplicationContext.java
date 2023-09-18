@@ -36,12 +36,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
      */
     @Override
     public void refresh() throws BeansException, IllegalStateException {
-        /**
-         * 在这里添加 ApplicationContextAwareProcessor 的话会有问题：
-         *   在加载 requestMapping 这个bean时，为其设置的 applicationContext 会是子级上下文
-         *   后面执行 initMapping 时，从子级上下文中拿不到 controller 的定义（应该要从父级上下文中取controller）
-         */
-        //prepareBeanFactory(this.getBeanFactory());
+        prepareBeanFactory(this.getBeanFactory());
 
         // 注册并执行 BeanFactoryPostProcessor
         postProcessBeanFactory(this.getBeanFactory());
@@ -110,6 +105,11 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     @Override
     public Object getBean(String beanName) throws BeansException {
         Object returnObj = getBeanFactory().getBean(beanName);
+        // todo 如何去掉下面这段逻辑
+        // 这里需要再处理一下 ApplicationContextAware 接口，否则会有以下问题：
+        //   父级上下文刷新时，会执行 initHandlerMappings() 方法时，会走到这里获取 RequestMappingHandlerMapping 这个bean，这个bean是在子级上下文刷新的时候创建的
+        //   所以此时这个bean中的 applicationContext 是子级上下文。在后面执行 initMapping() 时，从子级上下文中拿不到 controller 的定义，因为 controller 的定义在父级上下文中
+        //   所以这里需要将这个 bean 的 applicationContext 设置为当前的父级上下文
         if (returnObj instanceof ApplicationContextAware) {
             ((ApplicationContextAware) returnObj).setApplicationContext(this);
         }
