@@ -37,7 +37,7 @@ public class SpringTest {
          * 测试 bean 工厂功能
          */
         Boolean test11 = context.containsBean("scyBaseService");
-        Boolean test12 = context.containsSingleton("scyBaseService");
+        //Boolean test12 = context.containsSingleton("scyBaseService");
         Boolean test13 = context.containsBeanDefinition("scyBaseService");
 
         Boolean test2 = context.isPrototype("scyBaseService");
@@ -45,7 +45,7 @@ public class SpringTest {
 
         int test4 = context.getBeanDefinitionCount();
         String[] test5 = context.getBeanDefinitionNames();
-        String[] test6 = context.getSingletonNames();
+        //String[] test6 = context.getSingletonNames();
 
         // 测试 getBeansOfType() getType() 方法。有 bug
         Class<?> test7 = context.getType("scyBaseService");

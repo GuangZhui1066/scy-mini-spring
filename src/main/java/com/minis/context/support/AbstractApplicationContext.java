@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
-import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.context.ApplicationContext;
 import com.minis.context.ApplicationContextAware;
@@ -140,26 +139,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     @Override
-    public void registerSingleton(String beanName, Object singletonObject) {
-        getBeanFactory().registerSingleton(beanName, singletonObject);
-    }
-
-    @Override
-    public Object getSingleton(String beanName) {
-        return getBeanFactory().getSingleton(beanName);
-    }
-
-    @Override
-    public boolean containsSingleton(String beanName) {
-        return getBeanFactory().containsSingleton(beanName);
-    }
-
-    @Override
-    public String[] getSingletonNames() {
-        return getBeanFactory().getSingletonNames();
-    }
-
-    @Override
     public boolean containsBeanDefinition(String beanName) {
         return getBeanFactory().containsBeanDefinition(beanName);
     }
@@ -182,32 +161,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     @Override
     public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
         return getBeanFactory().getBeansOfType(type);
-    }
-
-    @Override
-    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
-        getBeanFactory().addBeanPostProcessor(beanPostProcessor);
-
-    }
-
-    @Override
-    public int getBeanPostProcessorCount() {
-        return getBeanFactory().getBeanPostProcessorCount();
-    }
-
-    @Override
-    public void registerDependentBean(String beanName, String dependentBeanName) {
-        getBeanFactory().registerDependentBean(beanName, dependentBeanName);
-    }
-
-    @Override
-    public String[] getDependentBeans(String beanName) {
-        return getBeanFactory().getDependentBeans(beanName);
-    }
-
-    @Override
-    public String[] getDependenciesForBean(String beanName) {
-        return getBeanFactory().getDependenciesForBean(beanName);
     }
 
 

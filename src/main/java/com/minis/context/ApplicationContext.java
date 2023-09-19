@@ -1,9 +1,9 @@
 package com.minis.context;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.factory.HierarchicalBeanFactory;
 import com.minis.beans.factory.ListableBeanFactory;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
-import com.minis.beans.factory.config.ConfigurableBeanFactory;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.core.env.Environment;
 import com.minis.core.env.EnvironmentCapable;
@@ -17,7 +17,7 @@ import com.minis.core.env.EnvironmentCapable;
  *   支持事件的发布与监听
  */
 public interface ApplicationContext
-    extends EnvironmentCapable, ListableBeanFactory, ConfigurableBeanFactory, ApplicationEventPublisher {
+    extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory, ApplicationEventPublisher {
 
     String getApplicationName();
 
