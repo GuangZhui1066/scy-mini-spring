@@ -13,11 +13,6 @@ import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
-import com.minis.context.ApplicationEvent;
-import com.minis.context.ApplicationEventPublisher;
-import com.minis.context.ApplicationListener;
-import com.minis.context.event.ContextRefreshedEvent;
-import com.minis.context.event.SimpleApplicationEventPublisher;
 import com.minis.context.support.AbstractApplicationContext;
 import com.minis.web.context.WebApplicationContext;
 
@@ -109,31 +104,6 @@ public class AnnotationConfigWebApplicationContext
         this.servletContext = servletContext;
     }
 
-
-    /**
-     * 实现 AbstractApplicationContext 的接口
-     */
-    @Override
-    public void registerListeners() {
-        String[] beanNamesForType = this.beanFactory.getBeanNamesForType(ApplicationListener.class);
-        for (String beanName : beanNamesForType) {
-            try {
-                Object bean = this.beanFactory.getBean(beanName);
-                if (bean instanceof ApplicationListener) {
-                    this.getApplicationEventPublisher().addApplicationListener((ApplicationListener) bean);
-                }
-            } catch (BeansException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void initApplicationEventPublisher() {
-        ApplicationEventPublisher aep = new SimpleApplicationEventPublisher();
-        this.setApplicationEventPublisher(aep);
-    }
-
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
     }
@@ -153,23 +123,8 @@ public class AnnotationConfigWebApplicationContext
     }
 
     @Override
-    public void finishRefresh() {
-        publishEvent(new ContextRefreshedEvent(this));
-    }
-
-    @Override
     public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
         return this.beanFactory;
-    }
-
-    @Override
-    public void publishEvent(ApplicationEvent event) {
-        this.getApplicationEventPublisher().publishEvent(event);
-    }
-
-    @Override
-    public void addApplicationListener(ApplicationListener listener) {
-        this.getApplicationEventPublisher().addApplicationListener(listener);
     }
 
 }

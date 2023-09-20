@@ -18,9 +18,12 @@ public class SpringTest {
         //ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
+
         /**
          * 测试获取 bean
          */
+        System.out.println("\n" + "----- 测试 getBean 开始 -----");
+
         ScyTestServiceImpl scyTestService = (ScyTestServiceImpl) context.getBean("scyTestService");
         scyTestService.sayHello();
         System.out.println("scyTestService property1: " + scyTestService.getProperty1());
@@ -31,6 +34,8 @@ public class SpringTest {
 
         ScyCircleService circleService = baseService.getScyCircleService();
         circleService.getScyTestService().sayHello();
+
+        System.out.println("----- 测试 getBean 结束 -----" + "\n");
 
 
         /**
@@ -59,10 +64,12 @@ public class SpringTest {
         /**
          * 测试事件机制
          */
+        System.out.println("\n" + "----- 测试事件机制开始 -----");
         MyContextRefreshListener myContextRefreshListener = new MyContextRefreshListener();
         // ClassPathXmlApplicationContext 在执行 refresh() 方法时，已经注册过一个事件监听器，这里再注册第二个监听器
         context.addApplicationListener(myContextRefreshListener);
         context.publishEvent(new ContextRefreshedEvent(context));
+        System.out.println("----- 测试事件机制结束 -----" + "\n");
 
 
         /**
@@ -85,7 +92,9 @@ public class SpringTest {
         ActionP actionP = (ActionP) context.getBean("actionP");
         EctionQ ectionQ = (EctionQ) context.getBean("ectionQ");
         ActionP actionPInQ = ectionQ.getActionP();
+        System.out.println("\n" + "----- 测试三级缓存开始 -----");
         System.out.println(actionP == actionPInQ);
+        System.out.println("----- 测试三级缓存结束 -----" + "\n");
 
     }
 

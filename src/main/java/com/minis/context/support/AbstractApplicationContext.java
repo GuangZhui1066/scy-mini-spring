@@ -1,26 +1,39 @@
 package com.minis.context.support;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
-import com.minis.context.ApplicationContext;
 import com.minis.context.ApplicationContextAware;
-import com.minis.context.ApplicationEventPublisher;
+import com.minis.context.ApplicationEvent;
+import com.minis.context.ApplicationListener;
+import com.minis.context.ConfigurableApplicationContext;
+import com.minis.context.event.ApplicationEventMulticaster;
+import com.minis.context.event.ContextRefreshedEvent;
+import com.minis.context.event.SimpleApplicationEventMulticaster;
 import com.minis.core.env.Environment;
 
 /**
  * ApplicationContext 的抽象实现类
  */
-public abstract class AbstractApplicationContext implements ApplicationContext {
+public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
+
+    public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
 
     private Environment environment;
 
-    private ApplicationEventPublisher applicationEventPublisher;
+    // 事件发布者
+    private ApplicationEventMulticaster applicationEventMulticaster;
+
+    // 事件监听者
+    private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<ApplicationListener<?>>();
 
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
@@ -42,7 +55,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         // 注册 Bean后置处理器
         registerBeanPostProcessors(this.getBeanFactory());
         // 初始化事件发布者
-        initApplicationEventPublisher();
+        initApplicationEventMulticaster();
         // 获取所有 bean
         onRefresh();
         // 注册事件监听者
@@ -51,16 +64,51 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         finishRefresh();
     }
 
-    public abstract void registerListeners();
-    public abstract void initApplicationEventPublisher();
     public abstract void postProcessBeanFactory(ConfigurableListableBeanFactory bf);
     public abstract void registerBeanPostProcessors(ConfigurableListableBeanFactory bf);
     public abstract void onRefresh();
-    public abstract void finishRefresh();
 
     protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
     }
+
+    /**
+     * 初始化事件发布者
+     */
+    protected void initApplicationEventMulticaster() {
+        ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+        applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+        beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
+    }
+
+    /**
+     * 注册事件监听者
+     */
+    protected void registerListeners() {
+        for (ApplicationListener<?> listener : getApplicationListeners()) {
+            getApplicationEventMulticaster().addApplicationListener(listener);
+        }
+
+        String[] beanNamesForType = getBeanNamesForType(ApplicationListener.class);
+        for (String beanName : beanNamesForType) {
+            try {
+                Object bean = getBean(beanName);
+                if (bean instanceof ApplicationListener) {
+                    this.getApplicationEventMulticaster().addApplicationListener((ApplicationListener<?>) bean);
+                }
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 发布容器刷新完成事件
+     */
+    protected void finishRefresh() {
+        publishEvent(new ContextRefreshedEvent(this));
+    }
+
 
     /**
      * 环境
@@ -180,12 +228,30 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     /**
      * 事件
      */
-    public ApplicationEventPublisher getApplicationEventPublisher() {
-        return applicationEventPublisher;
+    ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalStateException {
+        if (this.applicationEventMulticaster == null) {
+            throw new IllegalStateException("ApplicationEventMulticaster not initialized - " +
+                "call 'refresh' before multicasting events via the context: " + this);
+        }
+        return this.applicationEventMulticaster;
     }
 
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    @Override
+    public void addApplicationListener(ApplicationListener<?> listener) {
+        if (this.applicationEventMulticaster != null) {
+            this.applicationEventMulticaster.addApplicationListener(listener);
+        } else {
+            this.applicationListeners.add(listener);
+        }
+    }
+
+    public Collection<ApplicationListener<?>> getApplicationListeners() {
+        return this.applicationListeners;
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+        applicationEventMulticaster.multicastEvent(event);
     }
 
 }
