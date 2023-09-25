@@ -45,6 +45,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
     }
 
     protected void destroyBeans() {
+        // todo
         //getBeanFactory().destroySingletons();
     }
 
