@@ -1,14 +1,17 @@
 package com.minis.beans.factory.config;
 
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.HierarchicalBeanFactory;
 
 /**
- * 抽象出维护bean之间依赖关系的能力，以及支持bean处理器的能力
+ * 提供了一些配置 BeanFactory 的能力
  */
-public interface ConfigurableBeanFactory extends BeanFactory, SingletonBeanRegistry {
+public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, SingletonBeanRegistry {
 
     String SCOPE_SINGLETON = "singleton";
     String SCOPE_PROTOTYPE = "prototype";
+
+    void setParentBeanFactory(BeanFactory parentBeanFactory) throws IllegalStateException;
 
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
 

@@ -1,7 +1,7 @@
 package com.minis.core.env;
 
 /**
- * 获取环境属性
+ * 处理键值对形式的属性值
  */
 public interface PropertyResolver {
 

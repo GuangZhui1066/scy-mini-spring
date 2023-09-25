@@ -19,12 +19,11 @@ public class XmlWebApplicationContext
 
     @Override
     public ServletContext getServletContext() {
-        return this.servletContext;
+        return servletContext;
     }
 
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
-
 }

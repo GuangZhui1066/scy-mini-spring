@@ -22,6 +22,11 @@ import com.minis.util.ReflectionUtils;
  */
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
 
+    public AbstractAutowireCapableBeanFactory() {
+        super();
+    }
+
+
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
         // 通过 bean 处理器创建 bean，不通过 Spring 创建
@@ -79,153 +84,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return exposedObject;
     }
 
-    protected Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) {
-        Object exposedObject = bean;
-        for (BeanPostProcessor bp : getBeanPostProcessors()) {
-            if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
-                exposedObject = ((SmartInstantiationAwareBeanPostProcessor) bp).getEarlyBeanReference(exposedObject, beanName);
-                if (exposedObject == null) {
-                    return exposedObject;
-                }
-            }
-        }
-
-        return exposedObject;
-    }
-
     /**
-     * 为 bean 的属性赋值
+     * 用构造器创建 bean 的实例
      */
-    protected void populateBean(String beanName, BeanDefinition beanDefinition, Object obj) {
-        PropertyValues pvs = beanDefinition.getPropertyValues();
-
-        // 判断是否需要对 bean 的属性赋值
-        boolean continueWithPropertyPopulation = true;
-        for (BeanPostProcessor bp : getBeanPostProcessors()) {
-            if (bp instanceof InstantiationAwareBeanPostProcessor) {
-                InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-                if (!ibp.postProcessAfterInstantiation(obj, beanName)) {
-                    continueWithPropertyPopulation = false;
-                    break;
-                }
-            }
-        }
-        if (!continueWithPropertyPopulation) {
-            return;
-        }
-
-        // 处理 bean 的属性值 (注入 @Autowire 的属性)
-        for (BeanPostProcessor bp : getBeanPostProcessors()) {
-            if (bp instanceof InstantiationAwareBeanPostProcessor) {
-                InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-                pvs = ibp.postProcessPropertyValues(pvs, obj, beanName);
-                if (pvs == null) {
-                    return;
-                }
-            }
-        }
-
-        // 为 bean 的属性赋值
-        applyPropertyValues(beanName, beanDefinition, obj, pvs);
-    }
-
-    /**
-     *
-     */
-    protected Object initializeBean(String beanName, Object singleton, BeanDefinition beanDefinition) {
-        // 处理 Aware 接口
-        invokeAwareMethods(beanName, singleton);
-
-        // 执行 BeanPostProcessor
-        // 用 BeanPostProcessor 处理完 bean 的返回值 (比如可能返回 bean 的代理对象) 代替原本的 bean 实例
-        //   1. 在初始化之前处理 bean
-        singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
-        //   2. 执行初始化方法
-        try {
-            invokeInitMethods(beanDefinition, singleton);
-        } catch (Throwable e) {
-            throw new BeansException("Invocation of init method failed: " + beanName);
-        }
-        //   3. 在初始化之后处理 bean
-        singleton = applyBeanPostProcessorsAfterInitialization(singleton, beanName);
-
-        return singleton;
-    }
-
-    private void invokeAwareMethods(final String beanName, final Object bean) {
-        if (bean instanceof Aware) {
-            if (bean instanceof BeanNameAware) {
-                ((BeanNameAware) bean).setBeanName(beanName);
-            }
-            if (bean instanceof BeanFactoryAware) {
-                ((BeanFactoryAware) bean).setBeanFactory(this);
-            }
-        }
-    }
-
-    private void invokeInitMethods(BeanDefinition beanDefinition, final Object bean) throws Throwable {
-        // 处理 InitializingBean 接口
-        boolean isInitializingBean = (bean instanceof InitializingBean);
-        if (isInitializingBean) {
-            ((InitializingBean) bean).afterPropertiesSet();
-        }
-
-        try {
-            if (beanDefinition.getInitMethodName() != null && !"".equals(beanDefinition.getInitMethodName())) {
-                invokeCustomInitMethod(beanDefinition, bean);
-            }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 执行自定义的初始化方法 (即在 beanDefinition 中声明的 init 方法)
-     */
-    protected void invokeCustomInitMethod(BeanDefinition beanDefinition, final Object bean) throws Throwable {
-        Method initMethod = bean.getClass().getMethod(beanDefinition.getInitMethodName());
-        ReflectionUtils.makeAccessible(initMethod);
-        initMethod.invoke(bean);
-    }
-
-    @Override
-    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws
-        BeansException {
-        Object result = existingBean;
-        for (BeanPostProcessor beanProcessor : this.getBeanPostProcessors()) {
-            result = beanProcessor.postProcessBeforeInitialization(result, beanName);
-            if (result == null) {
-                return null;
-            }
-        }
-        return result;
-    }
-
-    protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
-        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
-            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
-                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
-                if (result != null) {
-                    return result;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
-        Object result = existingBean;
-        for (BeanPostProcessor beanProcessor : this.getBeanPostProcessors()) {
-            result = beanProcessor.postProcessAfterInitialization(result, beanName);
-            if (result == null) {
-                return null;
-            }
-        }
-        return result;
-    }
-
     protected Object createBeanInstance(BeanDefinition beanDefinition) {
         Object obj = null;
         Class<?> clazz;
@@ -277,6 +138,62 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return obj;
     }
 
+    /**
+     * 暴露出 bean 的代理对象
+     */
+    protected Object getEarlyBeanReference(String beanName, BeanDefinition beanDefinition, Object bean) {
+        Object exposedObject = bean;
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
+                exposedObject = ((SmartInstantiationAwareBeanPostProcessor) bp).getEarlyBeanReference(exposedObject, beanName);
+                if (exposedObject == null) {
+                    return exposedObject;
+                }
+            }
+        }
+
+        return exposedObject;
+    }
+
+    /**
+     * 为 bean 的属性赋值
+     */
+    protected void populateBean(String beanName, BeanDefinition beanDefinition, Object obj) {
+        PropertyValues pvs = beanDefinition.getPropertyValues();
+
+        // 判断是否需要对 bean 的属性赋值
+        boolean continueWithPropertyPopulation = true;
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            if (bp instanceof InstantiationAwareBeanPostProcessor) {
+                InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+                if (!ibp.postProcessAfterInstantiation(obj, beanName)) {
+                    continueWithPropertyPopulation = false;
+                    break;
+                }
+            }
+        }
+        if (!continueWithPropertyPopulation) {
+            return;
+        }
+
+        // 处理 bean 的属性值 (注入 @Autowire 的属性)
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            if (bp instanceof InstantiationAwareBeanPostProcessor) {
+                InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+                pvs = ibp.postProcessPropertyValues(pvs, obj, beanName);
+                if (pvs == null) {
+                    return;
+                }
+            }
+        }
+
+        // 为 bean 的属性赋值
+        applyPropertyValues(beanName, beanDefinition, obj, pvs);
+    }
+
+    /**
+     * 为 bean 的属性赋值
+     */
     private void applyPropertyValues(String beanName, BeanDefinition beanDefinition, Object obj, PropertyValues pvs) {
         // 处理成员变量
         if (pvs != null && !pvs.isEmpty()) {
@@ -323,6 +240,115 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 }
             }
         }
+    }
+
+    /**
+     * 初始化 bean
+     */
+    protected Object initializeBean(String beanName, Object singleton, BeanDefinition beanDefinition) {
+        // 处理 Aware 接口
+        invokeAwareMethods(beanName, singleton);
+
+        // 执行 BeanPostProcessor
+        // 用 BeanPostProcessor 处理完 bean 的返回值 (比如可能返回 bean 的代理对象) 代替原本的 bean 实例
+        //   1. 在初始化之前处理 bean
+        singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+        //   2. 执行初始化方法
+        try {
+            invokeInitMethods(beanDefinition, singleton);
+        } catch (Throwable e) {
+            throw new BeansException("Invocation of init method failed: " + beanName);
+        }
+        //   3. 在初始化之后处理 bean
+        singleton = applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+
+        return singleton;
+    }
+
+    /**
+     * 处理 Aware 接口
+     */
+    private void invokeAwareMethods(final String beanName, final Object bean) {
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+        }
+    }
+
+    /**
+     * 在 bean 的属性被赋值之后，初始化方法执行之前 处理bean
+     */
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws
+        BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result = beanProcessor.postProcessBeforeInitialization(result, beanName);
+            if (result == null) {
+                return null;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 执行 init 方法
+     */
+    private void invokeInitMethods(BeanDefinition beanDefinition, final Object bean) throws Throwable {
+        // 处理 InitializingBean 接口
+        boolean isInitializingBean = (bean instanceof InitializingBean);
+        if (isInitializingBean) {
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
+
+        // 执行自定义的 init 方法
+        try {
+            if (beanDefinition.getInitMethodName() != null && !"".equals(beanDefinition.getInitMethodName())) {
+                invokeCustomInitMethod(beanDefinition, bean);
+            }
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 执行自定义的初始化方法 (即在 beanDefinition 中声明的 init 方法)
+     */
+    protected void invokeCustomInitMethod(BeanDefinition beanDefinition, final Object bean) throws Throwable {
+        Method initMethod = bean.getClass().getMethod(beanDefinition.getInitMethodName());
+        ReflectionUtils.makeAccessible(initMethod);
+        initMethod.invoke(bean);
+    }
+
+    protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 在 bean 的初始化方法执行之后 处理bean
+     */
+    @Override
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result = beanProcessor.postProcessAfterInitialization(result, beanName);
+            if (result == null) {
+                return null;
+            }
+        }
+        return result;
     }
 
 }

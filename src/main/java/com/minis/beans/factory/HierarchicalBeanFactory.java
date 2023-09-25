@@ -8,6 +8,6 @@ public interface HierarchicalBeanFactory extends BeanFactory {
     /**
      * 获取父级 BeanFactory
      */
-    //BeanFactory getParentBeanFactory();
+    BeanFactory getParentBeanFactory();
 
 }

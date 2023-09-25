@@ -9,8 +9,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.config.AutowireCapableBeanFactory;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
+import com.minis.beans.factory.support.DefaultListableBeanFactory;
+import com.minis.context.ApplicationContext;
 import com.minis.context.ApplicationContextAware;
 import com.minis.context.ApplicationEvent;
 import com.minis.context.ApplicationListener;
@@ -18,7 +22,9 @@ import com.minis.context.ConfigurableApplicationContext;
 import com.minis.context.event.ApplicationEventMulticaster;
 import com.minis.context.event.ContextRefreshedEvent;
 import com.minis.context.event.SimpleApplicationEventMulticaster;
+import com.minis.core.env.ConfigurableEnvironment;
 import com.minis.core.env.Environment;
+import com.minis.core.env.StandardEnvironment;
 
 /**
  * ApplicationContext 的抽象实现类
@@ -27,13 +33,15 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
 
-    private Environment environment;
+    private ApplicationContext parent;
+
+    private ConfigurableEnvironment environment;
 
     // 事件发布者
     private ApplicationEventMulticaster applicationEventMulticaster;
 
     // 事件监听者
-    private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<ApplicationListener<?>>();
+    private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
 
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
@@ -43,34 +51,123 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private final AtomicBoolean closed = new AtomicBoolean();
 
 
+    public AbstractApplicationContext() {
+    }
+
+    public AbstractApplicationContext(ApplicationContext parent) {
+        this();
+        setParent(parent);
+    }
+
+
+    @Override
+    public String getApplicationName() {
+        return "";
+    }
+
+    @Override
+    public void setParent(ApplicationContext parent) {
+        // 设置父级 ApplicationContext
+        this.parent = parent;
+
+        // 设置父级 BeanFactory
+        this.getBeanFactory().setParentBeanFactory(getInternalParentBeanFactory());
+
+        // 父级环境
+        if (parent != null) {
+            Environment parentEnvironment = parent.getEnvironment();
+            if (parentEnvironment instanceof ConfigurableEnvironment) {
+                getEnvironment().merge((ConfigurableEnvironment) parentEnvironment);
+            }
+        }
+    }
+
+    protected BeanFactory getInternalParentBeanFactory() {
+        return (getParent() instanceof ConfigurableApplicationContext) ?
+            ((ConfigurableApplicationContext) getParent()).getBeanFactory() : getParent();
+    }
+
+    @Override
+    public ApplicationContext getParent() {
+        return this.parent;
+    }
+
+    @Override
+    public void setEnvironment(ConfigurableEnvironment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public ConfigurableEnvironment getEnvironment() {
+        if (this.environment == null) {
+            this.environment = createEnvironment();
+        }
+        return this.environment;
+    }
+
+    protected ConfigurableEnvironment createEnvironment() {
+        return new StandardEnvironment();
+    }
+
+    @Override
+    public long getStartupDate() {
+        return this.startupDate;
+    }
+
+
     /**
-     * 核心方法
+     * 核心方法：容器刷新
      */
     @Override
     public void refresh() throws BeansException, IllegalStateException {
-        prepareBeanFactory(this.getBeanFactory());
+        // 初始化 BeanFactory，填入 BeanDefinitions
+        ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-        // 注册并执行 BeanFactoryPostProcessor
-        postProcessBeanFactory(this.getBeanFactory());
-        // 注册 Bean后置处理器
-        registerBeanPostProcessors(this.getBeanFactory());
+        //
+        prepareBeanFactory(beanFactory);
+
+        // 注册 BeanFactoryPostProcessor
+        postProcessBeanFactory(beanFactory);
+
+        // todo
+        invokeBeanFactoryPostProcessors(beanFactory);
+
+        // 注册 BeanPostProcessor
+        registerBeanPostProcessors(beanFactory);
+
         // 初始化事件发布者
         initApplicationEventMulticaster();
-        // 获取所有 bean
-        onRefresh();
+
         // 注册事件监听者
         registerListeners();
+
+        // todo: 初始化所有非懒加载的 bean
+        finishBeanFactoryInitialization(beanFactory);
+
         // 发布事件
         finishRefresh();
     }
 
-    public abstract void postProcessBeanFactory(ConfigurableListableBeanFactory bf);
-    public abstract void registerBeanPostProcessors(ConfigurableListableBeanFactory bf);
-    public abstract void onRefresh();
+
+    protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+        // 创建 beanFactory，注册 beanDefinition
+        refreshBeanFactory();
+        ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+        return beanFactory;
+    }
+
+    protected abstract void refreshBeanFactory();
 
     protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
     }
+
+    protected abstract void postProcessBeanFactory(ConfigurableListableBeanFactory bf);
+
+    protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+    }
+
+    protected abstract void registerBeanPostProcessors(ConfigurableListableBeanFactory bf);
 
     /**
      * 初始化事件发布者
@@ -103,6 +200,12 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     }
 
     /**
+     * 初始化所有非懒加载的 bean
+     */
+    protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+    }
+
+    /**
      * 发布容器刷新完成事件
      */
     protected void finishRefresh() {
@@ -110,36 +213,24 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     }
 
 
-    /**
-     * 环境
-     */
     @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
-    @Override
-    public Environment getEnvironment() {
-        return this.environment;
-    }
-
-    @Override
-    public String getApplicationName() {
-        return "";
-    }
-
-    @Override
-    public long getStartupDate() {
-        return this.startupDate;
+    public BeanFactory getParentBeanFactory() {
+        return getParent();
     }
 
     @Override
     public void close() {
+        // todo: ContextClosedEvent
+        //publishEvent(new ContextClosedEvent(this));
+        closeBeanFactory();
+        this.active.set(false);
     }
+
+    protected abstract void closeBeanFactory();
 
     @Override
     public boolean isActive() {
-        return true;
+        return this.active.get();
     }
 
 
@@ -147,16 +238,21 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
      * 包装BeanFactory
      */
     @Override
-    public abstract ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException;
+    public abstract DefaultListableBeanFactory getBeanFactory() throws IllegalStateException;
+
+    @Override
+    public AutowireCapableBeanFactory getAutowireCapableBeanFactory() throws IllegalStateException {
+        return getBeanFactory();
+    }
 
     @Override
     public Object getBean(String beanName) throws BeansException {
         Object returnObj = getBeanFactory().getBean(beanName);
         // todo 如何去掉下面这段逻辑
         // 这里需要再处理一下 ApplicationContextAware 接口，否则会有以下问题：
-        //   父级上下文刷新时，会执行 initHandlerMappings() 方法时，会走到这里获取 RequestMappingHandlerMapping 这个bean，这个bean是在子级上下文刷新的时候创建的
-        //   所以此时这个bean中的 applicationContext 是子级上下文。在后面执行 initMapping() 时，从子级上下文中拿不到 controller 的定义，因为 controller 的定义在父级上下文中
-        //   所以这里需要将这个 bean 的 applicationContext 设置为当前的父级上下文
+        //   子级上下文刷新时，会获取 RequestMappingHandlerMapping 这个bean (在执行initHandlerMappings方法时)，这个bean是在父级上下文刷新的时候创建的
+        //   所以此时这个bean中的 applicationContext 是父级上下文。在后面执行 initMapping() 时，从父级上下文中拿不到 controller 的定义，因为 controller 的定义在子级上下文中
+        //   所以这里需要将这个 bean 的 applicationContext 设置为当前的子级上下文
         if (returnObj instanceof ApplicationContextAware) {
             ((ApplicationContextAware) returnObj).setApplicationContext(this);
         }
@@ -167,9 +263,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public Boolean containsBean(String name) {
         return getBeanFactory().containsBean(name);
     }
-    //	public void registerBean(String beanName, Object obj) {
-    //		getBeanFactory().registerBean(beanName, obj);
-    //	}
 
     @Override
     public boolean isSingleton(String name) {
@@ -215,13 +308,13 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     /**
      * bean处理器
      */
-    public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
-        return this.beanFactoryPostProcessors;
-    }
-
     @Override
     public void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor) {
         this.beanFactoryPostProcessors.add(postProcessor);
+    }
+
+    public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
+        return this.beanFactoryPostProcessors;
     }
 
 
@@ -236,6 +329,10 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         return this.applicationEventMulticaster;
     }
 
+    public Collection<ApplicationListener<?>> getApplicationListeners() {
+        return this.applicationListeners;
+    }
+
     @Override
     public void addApplicationListener(ApplicationListener<?> listener) {
         if (this.applicationEventMulticaster != null) {
@@ -243,10 +340,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         } else {
             this.applicationListeners.add(listener);
         }
-    }
-
-    public Collection<ApplicationListener<?>> getApplicationListeners() {
-        return this.applicationListeners;
     }
 
     @Override

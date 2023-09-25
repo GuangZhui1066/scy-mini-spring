@@ -2,10 +2,9 @@ package com.minis.beans.factory.support;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.FactoryBean;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.BeanPostProcessor;
@@ -22,12 +21,7 @@ import com.minis.beans.factory.config.ConfigurableBeanFactory;
  */
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
-    protected List<String> beanDefinitionNames = new ArrayList<>();
-
-    /**
-     * 用 ConcurrentHashMap，确保多线程并发情况下的安全性
-     */
-    protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+    private BeanFactory parentBeanFactory;
 
     /**
      * 所有的 bean 处理器
@@ -38,17 +32,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     public AbstractBeanFactory() {
     }
 
-    /**
-     * 把注册过的所有 bean 都创建出来
-     */
-    public void refresh() {
-        for (String beanName : beanDefinitionNames) {
-            try {
-                getBean(beanName);
-            } catch (BeansException e) {
-                e.printStackTrace();
-            }
-        }
+
+    @Override
+    public Object getBean(String beanName) throws BeansException {
+        return doGetBean(beanName);
     }
 
     /**
@@ -60,8 +47,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      *   3. 对这个实例对象的属性进行赋值 (包括定义在beans.xml中通过setter注入的属性，也包括被@Autowire修饰的自动注入的属性)
      *   4. 把构建完整的对象放入一级缓存
      */
-    @Override
-    public Object getBean(String beanName) throws BeansException {
+    public Object doGetBean(String beanName) throws BeansException {
         // 先尝试直接拿 bean 实例
         Object singleton = this.getSingleton(beanName);
 
@@ -96,8 +82,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         }
 
         FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
-        Object object = getObjectFromFactoryBean(factory, beanName);
-        return object;
+        return getObjectFromFactoryBean(factory, beanName);
     }
 
 
@@ -108,17 +93,21 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
     @Override
     public boolean isSingleton(String beanName) {
-        return this.beanDefinitionMap.get(beanName).isSingleton();
+        // todo
+        //return this.beanDefinitionMap.get(beanName).isSingleton();
+        return true;
     }
 
     @Override
     public boolean isPrototype(String beanName) {
-        return this.beanDefinitionMap.get(beanName).isPrototype();
+        // todo
+        //return this.beanDefinitionMap.get(beanName).isPrototype();
+        return false;
     }
 
     @Override
     public Class<?> getType(String beanName) {
-        Object beanInstance = this.getSingleton(beanName);
+        Object beanInstance = getSingleton(beanName);
         if (beanInstance != null) {
             return beanInstance.getClass();
         }
@@ -139,6 +128,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return this.beanPostProcessors;
+    }
+
+
+    @Override
+    public void setParentBeanFactory(BeanFactory parentBeanFactory) {
+        if (this.parentBeanFactory != null && this.parentBeanFactory != parentBeanFactory) {
+            throw new IllegalStateException("Already associated with parent BeanFactory: " + this.parentBeanFactory);
+        }
+        this.parentBeanFactory = parentBeanFactory;
+    }
+
+    @Override
+    public BeanFactory getParentBeanFactory() {
+        return this.parentBeanFactory;
     }
 
 }

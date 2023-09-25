@@ -1,11 +1,8 @@
 package com.minis.context;
 
-import com.minis.beans.BeansException;
 import com.minis.beans.factory.HierarchicalBeanFactory;
 import com.minis.beans.factory.ListableBeanFactory;
-import com.minis.beans.factory.config.BeanFactoryPostProcessor;
-import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
-import com.minis.core.env.Environment;
+import com.minis.beans.factory.config.AutowireCapableBeanFactory;
 import com.minis.core.env.EnvironmentCapable;
 
 /**
@@ -23,19 +20,11 @@ public interface ApplicationContext
 
     long getStartupDate();
 
-    ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException;
+    /**
+     * 获取父级上下文
+     */
+    ApplicationContext getParent();
 
-    void setEnvironment(Environment environment);
-
-    @Override
-    Environment getEnvironment();
-
-    void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor);
-
-    void refresh() throws BeansException, IllegalStateException;
-
-    void close();
-
-    boolean isActive();
+    AutowireCapableBeanFactory getAutowireCapableBeanFactory() throws IllegalStateException;
 
 }

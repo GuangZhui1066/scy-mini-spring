@@ -7,10 +7,6 @@ import com.minis.beans.BeansException;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
-import com.minis.beans.factory.support.DefaultListableBeanFactory;
-import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
-import com.minis.core.ClassPathXmlResource;
-import com.minis.core.Resource;
 
 /**
  * Context 负责整合容器的启动过程
@@ -25,9 +21,7 @@ import com.minis.core.Resource;
  *   容器应用上下文
  *   事件机制
  */
-public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
-
-    DefaultListableBeanFactory beanFactory;
+public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
 
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
@@ -37,11 +31,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
-        Resource resource = new ClassPathXmlResource(fileName);
-        DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(defaultListableBeanFactory);
-        reader.loadBeanDefinitions(resource);
-        this.beanFactory = defaultListableBeanFactory;
+        setConfigLocations(fileName);
 
         if (isRefresh) {
             try {
@@ -52,16 +42,6 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         }
     }
 
-    @Override
-    public void onRefresh() {
-        this.beanFactory.refresh();
-    }
-
-    @Override
-    public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
-        return this.beanFactory;
-    }
-
     /**
      * 注册 BeanFactoryPostProcessor
      */
@@ -69,13 +49,13 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
         System.out.println("ClassPathXmlApplicationContext try to postProcessBeanFactory");
 
-        String[] beanNamesForType = this.beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class);
+        String[] beanNamesForType = getBeanFactory().getBeanNamesForType(BeanFactoryPostProcessor.class);
         for (String beanName : beanNamesForType) {
             System.out.println("ClassPathXmlApplicationContext postProcessBeanFactory : " + beanName);
             try {
-                Object bean = this.beanFactory.getBean(beanName);
+                Object bean = getBeanFactory().getBean(beanName);
                 if (bean instanceof BeanFactoryPostProcessor) {
-                    this.beanFactoryPostProcessors.add((BeanFactoryPostProcessor) (this.beanFactory.getBean(beanName)));
+                    this.beanFactoryPostProcessors.add((BeanFactoryPostProcessor) bean);
                 }
             } catch (BeansException e) {
                 e.printStackTrace();
@@ -107,13 +87,13 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     public void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
         System.out.println("ClassPathXmlApplicationContext try to registerBeanPostProcessors");
 
-        String[] beanNamesForType = this.beanFactory.getBeanNamesForType(BeanPostProcessor.class);
+        String[] beanNamesForType = getBeanFactory().getBeanNamesForType(BeanPostProcessor.class);
         for (String beanName : beanNamesForType) {
             System.out.println("ClassPathXmlApplicationContext registerBeanPostProcessors : " + beanName);
             try {
-                Object bean = this.beanFactory.getBean(beanName);
+                Object bean = getBeanFactory().getBean(beanName);
                 if (bean instanceof BeanPostProcessor) {
-                    this.beanFactory.addBeanPostProcessor((BeanPostProcessor) (this.beanFactory.getBean(beanName)));
+                    getBeanFactory().addBeanPostProcessor((BeanPostProcessor) bean);
                 }
             } catch (BeansException e) {
                 e.printStackTrace();

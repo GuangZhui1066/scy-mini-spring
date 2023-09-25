@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.config.AbstractAutowireCapableBeanFactory;
@@ -16,10 +17,16 @@ import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
     implements ConfigurableListableBeanFactory, BeanDefinitionRegistry {
 
-    ConfigurableListableBeanFactory parentBeanFctory;
+    /**
+     * 用 ConcurrentHashMap，确保多线程并发情况下的安全性
+     */
+    protected final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
 
-    public void setParent(ConfigurableListableBeanFactory beanFactory) {
-        this.parentBeanFctory = beanFactory;
+    protected volatile List<String> beanDefinitionNames = new ArrayList<>();
+
+
+    public DefaultListableBeanFactory() {
+        super();
     }
 
 
@@ -27,7 +34,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public Object getBean(String beanName) throws BeansException{
         Object result = super.getBean(beanName);
         if (result == null) {
-            result = this.parentBeanFctory.getBean(beanName);
+            result = getParentBeanFactory().getBean(beanName);
         }
         return result;
     }

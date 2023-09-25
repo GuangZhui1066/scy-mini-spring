@@ -21,6 +21,7 @@ import com.minis.web.context.WebApplicationContext;
  * MVC 容器中可以访问 IoC 容器 (因为 IoC 容器是它的父类)
  *
  * 子级上下文，负责创建 Controller 实例
+ * 子级上下文可以访问到父级，父级不能访问子级
  */
 public class AnnotationConfigWebApplicationContext
         extends AbstractApplicationContext implements WebApplicationContext {
@@ -52,7 +53,7 @@ public class AnnotationConfigWebApplicationContext
         List<String> controllerNames = scanPackages(packageNames);
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         this.beanFactory = bf;
-        this.beanFactory.setParent(this.parentApplicationContext.getBeanFactory());
+        this.beanFactory.setParentBeanFactory(this.parentApplicationContext.getBeanFactory());
         loadBeanDefinitions(controllerNames);
 
         try {
@@ -105,6 +106,10 @@ public class AnnotationConfigWebApplicationContext
     }
 
     @Override
+    protected void refreshBeanFactory() {
+    }
+
+    @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
     }
 
@@ -118,12 +123,11 @@ public class AnnotationConfigWebApplicationContext
     }
 
     @Override
-    public void onRefresh() {
-        this.beanFactory.refresh();
+    protected void closeBeanFactory() {
     }
 
     @Override
-    public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
+    public DefaultListableBeanFactory getBeanFactory() throws IllegalStateException {
         return this.beanFactory;
     }
 
