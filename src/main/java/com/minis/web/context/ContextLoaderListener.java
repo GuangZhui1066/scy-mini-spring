@@ -46,7 +46,7 @@ public class ContextLoaderListener implements ServletContextListener {
         System.out.println("contextLocation-----------" + contextLocation);
 
         // 启动父级 IoC 容器，负责 Service 的创建
-        WebApplicationContext wac = new XmlWebApplicationContext(contextLocation);
+        XmlWebApplicationContext wac = new XmlWebApplicationContext(contextLocation);
         wac.setServletContext(servletContext);
         this.context = wac;
 

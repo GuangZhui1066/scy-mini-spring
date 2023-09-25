@@ -6,14 +6,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
-import com.minis.context.support.AbstractApplicationContext;
 import com.minis.web.context.WebApplicationContext;
 
 /**
@@ -23,38 +20,18 @@ import com.minis.web.context.WebApplicationContext;
  * 子级上下文，负责创建 Controller 实例
  * 子级上下文可以访问到父级，父级不能访问子级
  */
-public class AnnotationConfigWebApplicationContext
-        extends AbstractApplicationContext implements WebApplicationContext {
-
-    private WebApplicationContext parentApplicationContext;
-
-    private ServletContext servletContext;
-
-    DefaultListableBeanFactory beanFactory;
+public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext {
 
     public AnnotationConfigWebApplicationContext(String fileName) {
         this(fileName, null);
     }
 
     public AnnotationConfigWebApplicationContext(String fileName, WebApplicationContext parentApplicationContext) {
-        this.parentApplicationContext = parentApplicationContext;
-        if (this.parentApplicationContext != null) {
-            this.servletContext = this.parentApplicationContext.getServletContext();
-        }
+        setConfigLocations(fileName);
 
-        URL xmlPath = null;
-        try {
-            xmlPath = this.getServletContext().getResource(fileName);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        setParent(parentApplicationContext);
 
-        List<String> packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
-        List<String> controllerNames = scanPackages(packageNames);
-        DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-        this.beanFactory = bf;
-        this.beanFactory.setParentBeanFactory(this.parentApplicationContext.getBeanFactory());
-        loadBeanDefinitions(controllerNames);
+        setServletContext(((WebApplicationContext) getParent()).getServletContext());
 
         try {
             refresh();
@@ -63,13 +40,21 @@ public class AnnotationConfigWebApplicationContext
         }
     }
 
-    public void loadBeanDefinitions(List<String> controllerNames) {
-        for (String controller : controllerNames) {
-            String beanName = controller;
-            String beanClassName = controller;
-            BeanDefinition beanDefinition = new BeanDefinition(beanName, beanClassName);
-            this.beanFactory.registerBeanDefinition(beanName,beanDefinition);
+
+    @Override
+    protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException {
+        String[] configLocations = getConfigLocations();
+
+        URL xmlPath = null;
+        try {
+            xmlPath = this.getServletContext().getResource(configLocations[0]);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
+
+        List<String> packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
+        List<String> controllerNames = scanPackages(packageNames);
+        loadBeanDefinitions(beanFactory, controllerNames);
     }
 
     private List<String> scanPackages(List<String> packages) {
@@ -95,40 +80,23 @@ public class AnnotationConfigWebApplicationContext
         return tempControllerNames;
     }
 
-    @Override
-    public ServletContext getServletContext() {
-        return this.servletContext;
+    protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory, List<String> controllerNames) {
+        for (String controller : controllerNames) {
+            String beanName = controller;
+            String beanClassName = controller;
+            BeanDefinition beanDefinition = new BeanDefinition(beanName, beanClassName);
+            beanFactory.registerBeanDefinition(beanName,beanDefinition);
+        }
     }
 
-    @Override
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-
-    @Override
-    protected void refreshBeanFactory() {
-    }
-
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
-    }
 
     @Override
     public void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
         try {
-            this.beanFactory.addBeanPostProcessor((BeanPostProcessor) (this.beanFactory.getBean("autowiredAnnotationBeanPostProcessor")));
+            getBeanFactory().addBeanPostProcessor((BeanPostProcessor) (getBeanFactory().getBean("autowiredAnnotationBeanPostProcessor")));
         } catch (BeansException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void closeBeanFactory() {
-    }
-
-    @Override
-    public DefaultListableBeanFactory getBeanFactory() throws IllegalStateException {
-        return this.beanFactory;
     }
 
 }

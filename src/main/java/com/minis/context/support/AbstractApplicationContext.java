@@ -52,15 +52,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private final AtomicBoolean closed = new AtomicBoolean();
 
 
-    public AbstractApplicationContext() {
-    }
-
-    public AbstractApplicationContext(ApplicationContext parent) {
-        this();
-        setParent(parent);
-    }
-
-
     @Override
     public String getApplicationName() {
         return "";
@@ -70,9 +61,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public void setParent(ApplicationContext parent) {
         // 设置父级 ApplicationContext
         this.parent = parent;
-
-        // 设置父级 BeanFactory
-        this.getBeanFactory().setParentBeanFactory(getInternalParentBeanFactory());
 
         // 父级环境
         if (parent != null) {
@@ -154,6 +142,12 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         // 创建 beanFactory，注册 beanDefinition
         refreshBeanFactory();
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+        // 设置父级 BeanFactory
+        if (getParent() != null) {
+            beanFactory.setParentBeanFactory(((AbstractApplicationContext) getParent()).getBeanFactory());
+        }
+
         return beanFactory;
     }
 
@@ -163,7 +157,8 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
     }
 
-    protected abstract void postProcessBeanFactory(ConfigurableListableBeanFactory bf);
+    protected void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+    }
 
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
     }

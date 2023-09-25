@@ -4,9 +4,6 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
 
     private String[] configLocations;
 
-    public AbstractRefreshableConfigApplicationContext() {
-    }
-
 
     protected String[] getConfigLocations() {
         return this.configLocations;

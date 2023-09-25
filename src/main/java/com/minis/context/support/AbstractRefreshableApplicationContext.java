@@ -7,8 +7,6 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
     private DefaultListableBeanFactory beanFactory;
 
-    public AbstractRefreshableApplicationContext() {
-    }
 
     /**
      * 创建 BeanFactory，并注册 BeanDefinition

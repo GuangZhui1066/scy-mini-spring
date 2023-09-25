@@ -1,7 +1,5 @@
 package com.minis.web.servlet;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.minis.beans.BeansException;
 import com.minis.web.context.WebApplicationContext;
 import com.minis.web.context.support.AnnotationConfigWebApplicationContext;
-import com.minis.web.context.support.XmlScanComponentHelper;
 import com.minis.web.method.HandlerMethod;
 
 /**
@@ -51,11 +48,6 @@ public class DispatcherServlet extends HttpServlet {
     public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = DispatcherServlet.class.getName() + ".CONTEXT";
 
     /**
-     * 记录需要扫描的包名
-     */
-    private List<String> packageNames = new ArrayList<>();
-
-    /**
      * 记录所有 controller 的名称
      */
     private List<String> controllerNames = new ArrayList<>();
@@ -80,14 +72,6 @@ public class DispatcherServlet extends HttpServlet {
 
         // 获取配置 servlet 的配置文件 (即定义 Controller 的 minisMVC-servlet.xml 文件) 路径
         this.contextConfigLocation = config.getInitParameter("contextConfigLocation");
-        URL xmlPath = null;
-        try {
-            xmlPath = this.getServletContext().getResource(contextConfigLocation);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
 
         // 创建子级上下文，负责实例化 Controller
         this.webApplicationContext = new AnnotationConfigWebApplicationContext(contextConfigLocation, parentApplicationContext);
