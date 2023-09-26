@@ -1,9 +1,9 @@
 package com.minis.beans.factory.support;
 
-import com.minis.core.Resource;
 import com.minis.core.env.Environment;
 import com.minis.core.env.EnvironmentCapable;
 import com.minis.core.env.StandardEnvironment;
+import com.minis.core.io.Resource;
 
 public abstract class AbstractBeanDefinitionReader implements EnvironmentCapable, BeanDefinitionReader {
 

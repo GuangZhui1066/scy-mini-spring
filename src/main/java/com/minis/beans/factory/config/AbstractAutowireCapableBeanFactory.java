@@ -75,6 +75,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Instantiation of bean failed, beanName: " + beanName + ", e: " + e);
         }
 
+        // 注册有销毁方法的bean
+        registerDisposableBeanIfNecessary(beanName, obj, beanDefinition);
+
         // 这时 bean 还是真实对象，通过 getSingleton() 获取代理对象
         // todo: spring中是如何实现的。在这里是真实对象还是代理对象. spring中没有再调用 getSingleton()
         exposedObject = getSingleton(beanName);
@@ -349,6 +352,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
         return result;
+    }
+
+
+    /**
+     * 注册有销毁方法的bean，即bean继承自DisposableBean或有自定义的销毁方法
+     * todo
+     */
+    protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        ////只有singleton类型bean会执行销毁方法
+        //if (beanDefinition.isSingleton()) {
+        //    if (bean instanceof DisposableBean || StrUtil.isNotEmpty(beanDefinition.getDestroyMethodName())) {
+        //        registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, beanDefinition));
+        //    }
+        //}
     }
 
 }

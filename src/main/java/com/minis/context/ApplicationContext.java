@@ -4,6 +4,7 @@ import com.minis.beans.factory.HierarchicalBeanFactory;
 import com.minis.beans.factory.ListableBeanFactory;
 import com.minis.beans.factory.config.AutowireCapableBeanFactory;
 import com.minis.core.env.EnvironmentCapable;
+import com.minis.core.io.support.ResourcePatternResolver;
 
 /**
  * 上下文公共接口，所有的上下文都要实现 ApplicationContext
@@ -13,8 +14,8 @@ import com.minis.core.env.EnvironmentCapable;
  *   支持上下文
  *   支持事件的发布与监听
  */
-public interface ApplicationContext
-    extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory, ApplicationEventPublisher {
+public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
+        ApplicationEventPublisher, ResourcePatternResolver {
 
     String getApplicationName();
 

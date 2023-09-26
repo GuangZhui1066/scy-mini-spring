@@ -10,8 +10,8 @@ import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
 import com.minis.beans.factory.support.AbstractBeanDefinitionReader;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
-import com.minis.core.ClassPathXmlResource;
-import com.minis.core.Resource;
+import com.minis.core.io.ClassPathXmlResource;
+import com.minis.core.io.Resource;
 import org.dom4j.Element;
 
 /**

@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.DisposableBean;
 import com.minis.beans.factory.config.AutowireCapableBeanFactory;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.BeanPostProcessor;
@@ -26,11 +27,13 @@ import com.minis.context.event.SimpleApplicationEventMulticaster;
 import com.minis.core.env.ConfigurableEnvironment;
 import com.minis.core.env.Environment;
 import com.minis.core.env.StandardEnvironment;
+import com.minis.core.io.DefaultResourceLoader;
 
 /**
  * ApplicationContext 的抽象实现类
  */
-public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+        implements ConfigurableApplicationContext, DisposableBean {
 
     public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
 
@@ -253,6 +256,11 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     @Override
     public boolean isActive() {
         return this.active.get();
+    }
+
+    @Override
+    public void destroy() {
+        close();
     }
 
 

@@ -1,6 +1,6 @@
 package com.minis.beans.factory.support;
 
-import com.minis.core.Resource;
+import com.minis.core.io.Resource;
 
 /**
  * 解析并注册 BeanDefinition

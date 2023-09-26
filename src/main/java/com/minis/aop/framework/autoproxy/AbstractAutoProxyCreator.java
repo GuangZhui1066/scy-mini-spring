@@ -18,6 +18,7 @@ public abstract class AbstractAutoProxyCreator implements SmartInstantiationAwar
 
     /**
      * 记录已经生成过代理对象的 bean
+     * todo: 参考spring，改为map
      */
     private Set<Object> earlyProxyReferences = new HashSet<>();
 
@@ -80,7 +81,12 @@ public abstract class AbstractAutoProxyCreator implements SmartInstantiationAwar
         return createProxy(bean, beanName);
     }
 
-
     protected abstract Object createProxy(Object bean, String beanName);
+
+
+    // todo
+    protected Object wrapIfNecessary(Object bean, String beanName) {
+        return null;
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.minis.core;
+package com.minis.core.io;
 
 import java.util.Iterator;
 
