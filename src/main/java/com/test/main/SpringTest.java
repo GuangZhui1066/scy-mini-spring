@@ -8,6 +8,8 @@ import com.minis.context.support.ClassPathXmlApplicationContext;
 import com.test.ioc.ScyBaseService;
 import com.test.ioc.ScyCircleService;
 import com.test.ioc.ScyTestServiceImpl;
+import com.test.ioc.cglib.ActionM;
+import com.test.ioc.cglib.EctionN;
 import com.test.ioc.listener.MyContextRefreshListener;
 import com.test.ioc.threeLevelCache.ActionP;
 import com.test.ioc.threeLevelCache.EctionQ;
@@ -94,8 +96,20 @@ public class SpringTest {
         ActionP actionPInQ = ectionQ.getActionP();
         System.out.println("\n" + "----- 测试三级缓存开始 -----");
         System.out.println(actionP == actionPInQ);
+        System.out.println(actionP.getEctionQ() == ectionQ);
         System.out.println("----- 测试三级缓存结束 -----" + "\n");
 
+
+        /**
+         * 测试 Cglib 代理非接口类
+         */
+        ActionM actionM = (ActionM) context.getBean("actionM");
+        EctionN ectionN = (EctionN) context.getBean("ectionN");
+        ActionM actionMInN = ectionN.getActionM();
+        System.out.println("\n" + "----- 测试 Cglib 开始 -----");
+        System.out.println(actionM == actionMInN);
+        System.out.println(actionM.getEctionN() == ectionN);
+        System.out.println("----- 测试 Cglib 结束 -----" + "\n");
     }
 
 }

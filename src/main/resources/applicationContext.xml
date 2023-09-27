@@ -136,4 +136,9 @@
 
     <bean name="ectionQ" class="com.test.ioc.threeLevelCache.EctionQ" />
 
+
+    <bean name="actionM" class="com.test.ioc.cglib.ActionM" />
+
+    <bean name="ectionN" class="com.test.ioc.cglib.EctionN" />
+
 </beans>
