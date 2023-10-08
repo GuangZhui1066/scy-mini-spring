@@ -39,7 +39,7 @@ public class CglibAopProxy implements AopProxy {
 
         @Override
         public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-            return = methodProxy.invoke(target, args);
+            return methodProxy.invoke(target, args);
         }
     }
 
